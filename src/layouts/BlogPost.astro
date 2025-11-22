@@ -4,8 +4,8 @@ import Layout from './Layout.astro';
 import '../styles/global.css';
 import { Image } from 'astro:assets';
 
-const { frontmatter } = Astro.props;
-const { title, description, date, author, tags, banner } = frontmatter;
+const { frontmatter, headings } = Astro.props;
+const { title, description, date, tags, banner } = frontmatter;
 
 // Format the date
 const formattedDate = date ? new Date(date).toLocaleDateString('en-US', {
@@ -41,95 +41,184 @@ if (banner) {
     }
   }
 }
+
+// Filter headings to only include h2 and h3 for TOC
+const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) || [];
 ---
 
 <Layout>
   <div class="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white overflow-y-auto">
-    <div class="max-w-4xl mx-auto px-6 py-16">
-      <!-- Back to blog link with home icon -->
-      <div class="mb-12 flex items-center gap-4">
-        <a href="/blog" class="group inline-flex items-center gap-2 text-gray-400 hover:text-purple-400 transition-colors">
-          <div class="p-2 rounded-lg bg-gray-800/50 group-hover:bg-purple-900/30 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </div>
-          <span class="font-medium">Back to Blog</span>
-        </a>
-      </div>
-      
-      <!-- Article header with gradient -->
-      <article class="prose prose-invert prose-lg max-w-none">
-        <header class="mb-12 pb-8 border-b border-gray-800/50">
-          <h1 class="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent leading-tight">
-            {title}
-          </h1>
-          
-          {description && (
-            <p class="text-xl md:text-2xl text-gray-400 mb-6 leading-relaxed">
-              {description}
-            </p>
-          )}
-          
-          {bannerImage && (
-            <div class="my-8 -mx-6 md:mx-0 rounded-none md:rounded-2xl overflow-hidden border-0 md:border border-gray-800/50 shadow-2xl shadow-purple-500/10">
-              {typeof bannerImage === 'string' ? (
-                <img 
-                  src={bannerImage} 
-                  alt={title}
-                  class="w-full h-auto object-cover"
-                  loading="eager"
-                />
-              ) : (
-                <Image
-                  src={bannerImage}
-                  alt={title}
-                  width={1200}
-                  height={675}
-                  class="w-full h-auto object-cover"
-                  loading="eager"
-                />
-              )}
-            </div>
-          )}
-          
-          <div class="flex flex-wrap items-center gap-4 text-sm">
-            {formattedDate && (
-              <div class="flex items-center gap-2 text-gray-400">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    <!-- Mobile TOC Toggle Button (fixed at top) -->
+    {tocHeadings.length > 0 && (
+      <button 
+        id="mobile-toc-toggle"
+        class="lg:hidden fixed top-4 right-4 z-50 p-3 bg-purple-900/80 backdrop-blur-sm rounded-lg border border-purple-500/50 shadow-lg hover:bg-purple-800/80 transition-colors"
+        aria-label="Toggle table of contents"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    )}
+
+    <!-- Mobile TOC Overlay -->
+    {tocHeadings.length > 0 && (
+      <div 
+        id="mobile-toc-overlay"
+        class="lg:hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-40 hidden"
+      >
+        <div class="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-gradient-to-br from-gray-900 to-black border-l border-purple-500/30 shadow-2xl overflow-y-auto">
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                Table of Contents
+              </h2>
+              <button 
+                id="mobile-toc-close"
+                class="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+                aria-label="Close table of contents"
+              >
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
-                <time datetime={date} class="font-medium">{formattedDate}</time>
-              </div>
-            )}
-          </div>
-          
-          {tags && tags.length > 0 && (
-            <div class="flex flex-wrap gap-2 mt-6">
-              {tags.map((tag: string) => (
-                <span class="text-sm px-4 py-2 bg-gradient-to-r from-purple-900/50 to-blue-900/50 rounded-full text-purple-300 border border-purple-500/30 font-medium">
-                  #{tag}
-                </span>
-              ))}
+              </button>
             </div>
-          )}
-        </header>
-        
-        <!-- Article content with enhanced styling -->
-        <div class="blog-content">
-          <slot />
+            <nav class="toc-nav">
+              <ul class="space-y-1">
+                {tocHeadings.map((heading: any) => (
+                  <li style={`margin-left: ${(heading.depth - 2) * 1}rem`}>
+                    <a 
+                      href={`#${heading.slug}`}
+                      class="toc-link block py-2 px-3 text-gray-400 hover:text-purple-400 hover:bg-purple-900/20 rounded transition-all text-sm border-l-2 border-transparent hover:border-purple-500"
+                      data-heading-id={heading.slug}
+                    >
+                      {heading.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-16 lg:flex lg:gap-8 lg:items-start">
+      <!-- Main content -->
+      <div class="flex-1 max-w-4xl lg:max-w-3xl">
+        <!-- Back to blog link with home icon -->
+        <div class="mb-8 sm:mb-12 flex items-center gap-4">
+          <a href="/blog" class="group inline-flex items-center gap-2 text-gray-400 hover:text-purple-400 transition-colors">
+            <div class="p-2 rounded-lg bg-gray-800/50 group-hover:bg-purple-900/30 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </div>
+            <span class="font-medium">Back to Blog</span>
+          </a>
         </div>
         
-        <!-- Back to blog footer -->
-        <footer class="mt-16 pt-8 border-t border-gray-800/50">
-          <a href="/blog" class="group inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors font-medium">
-            <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            View all posts
-          </a>
-        </footer>
-      </article>
+        <!-- Article header with gradient -->
+        <article class="prose prose-invert prose-lg max-w-none">
+          <header class="mb-8 sm:mb-12 pb-8 border-b border-gray-800/50">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent leading-tight">
+              {title}
+            </h1>
+            
+            {description && (
+              <p class="text-lg sm:text-xl md:text-2xl text-gray-400 mb-6 leading-relaxed">
+                {description}
+              </p>
+            )}
+            
+            {bannerImage && (
+              <div class="my-8 -mx-4 sm:mx-0 rounded-none sm:rounded-2xl overflow-hidden border-0 sm:border border-gray-800/50 shadow-2xl shadow-purple-500/10">
+                {typeof bannerImage === 'string' ? (
+                  <img 
+                    src={bannerImage} 
+                    alt={title}
+                    class="w-full h-auto object-cover"
+                    loading="eager"
+                  />
+                ) : (
+                  <Image
+                    src={bannerImage}
+                    alt={title}
+                    width={1200}
+                    height={675}
+                    class="w-full h-auto object-cover"
+                    loading="eager"
+                  />
+                )}
+              </div>
+            )}
+            
+            <div class="flex flex-wrap items-center gap-4 text-sm">
+              {formattedDate && (
+                <div class="flex items-center gap-2 text-gray-400">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <time datetime={date} class="font-medium">{formattedDate}</time>
+                </div>
+              )}
+            </div>
+            
+            {tags && tags.length > 0 && (
+              <div class="flex flex-wrap gap-2 mt-6">
+                {tags.map((tag: string) => (
+                  <span class="text-sm px-4 py-2 bg-gradient-to-r from-purple-900/50 to-blue-900/50 rounded-full text-purple-300 border border-purple-500/30 font-medium">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </header>
+          
+          <!-- Article content with enhanced styling -->
+          <div class="blog-content">
+            <slot />
+          </div>
+          
+          <!-- Back to blog footer -->
+          <footer class="mt-16 pt-8 border-t border-gray-800/50">
+            <a href="/blog" class="group inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors font-medium">
+              <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              View all posts
+            </a>
+          </footer>
+        </article>
+      </div>
+
+      <!-- Desktop TOC Sidebar -->
+      {tocHeadings.length > 0 && (
+        <aside class="hidden lg:block lg:w-64 xl:w-72 flex-shrink-0">
+          <div class="sticky top-8">
+            <div class="bg-gradient-to-br from-gray-800/30 to-gray-900/30 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 shadow-xl">
+              <h2 class="text-lg font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                Table of Contents
+              </h2>
+              <nav class="toc-nav">
+                <ul class="space-y-1">
+                  {tocHeadings.map((heading: any) => (
+                    <li style={`margin-left: ${(heading.depth - 2) * 0.75}rem`}>
+                      <a 
+                        href={`#${heading.slug}`}
+                        class="toc-link block py-2 px-3 text-gray-400 hover:text-purple-400 hover:bg-purple-900/20 rounded transition-all text-sm border-l-2 border-transparent hover:border-purple-500"
+                        data-heading-id={heading.slug}
+                      >
+                        {heading.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </aside>
+      )}
     </div>
   </div>
 </Layout>
@@ -163,6 +252,7 @@ if (banner) {
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    scroll-margin-top: 2rem;
   }
   
   .blog-content h1 { font-size: 2.25rem; }
@@ -314,5 +404,74 @@ if (banner) {
   .blog-content em {
     color: #d1d5db;
   }
+
+  /* TOC Active Link Styles */
+  .toc-link.active {
+    color: #a78bfa;
+    background: rgba(167, 139, 250, 0.1);
+    border-left-color: #a78bfa;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
 </style>
+
+<script>
+  // Mobile TOC toggle functionality
+  const mobileToggle = document.getElementById('mobile-toc-toggle');
+  const mobileOverlay = document.getElementById('mobile-toc-overlay');
+  const mobileClose = document.getElementById('mobile-toc-close');
+
+  if (mobileToggle && mobileOverlay && mobileClose) {
+    mobileToggle.addEventListener('click', () => {
+      mobileOverlay.classList.remove('hidden');
+    });
+
+    mobileClose.addEventListener('click', () => {
+      mobileOverlay.classList.add('hidden');
+    });
+
+    mobileOverlay.addEventListener('click', (e) => {
+      if (e.target === mobileOverlay) {
+        mobileOverlay.classList.add('hidden');
+      }
+    });
+
+    // Close mobile TOC when clicking a link
+    const mobileTocLinks = mobileOverlay.querySelectorAll('.toc-link');
+    mobileTocLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileOverlay.classList.add('hidden');
+      });
+    });
+  }
+
+  // Active section highlighting with intersection observer
+  const observerOptions = {
+    rootMargin: '-80px 0px -80% 0px',
+    threshold: 0
+  };
+
+  const headingElements = document.querySelectorAll('.blog-content h2, .blog-content h3');
+  const tocLinks = document.querySelectorAll('.toc-link');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        // Remove active class from all links
+        tocLinks.forEach(link => link.classList.remove('active'));
+        // Add active class to current link
+        const activeLink = document.querySelector(`.toc-link[data-heading-id="${id}"]`);
+        if (activeLink) {
+          activeLink.classList.add('active');
+        }
+      }
+    });
+  }, observerOptions);
+
+  headingElements.forEach(heading => observer.observe(heading));
+</script>
 
