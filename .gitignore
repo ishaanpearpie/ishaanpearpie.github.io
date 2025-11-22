@@ -1,43 +1,40 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# build output
+dist/
+
+# generated types
+.astro/
+
+# vercel files
+.vercel/
 
 # dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+node_modules/
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
+# logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# environment variables
+.env
+.env.production
 
-# vercel
-.vercel
+# macOS-specific files
+.DS_Store
 
-# typescript
+# jetbrains setting folder
+.idea/
+
+# Blog content (fetched from private repo)
+# Keep index.astro but ignore all blog post folders
+src/pages/blog/*/
+!src/pages/blog/_templates/
+
+# Blog sync temporary directory
+blog-content-temp/
+.env.local
+
 *.tsbuildinfo
 next-env.d.ts
-dist
-.astro
+

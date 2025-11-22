@@ -1,41 +1,19 @@
 {
-  "name": "portfolio",
-  "version": "0.1.0",
-  "private": true,
+  "name": "",
   "type": "module",
+  "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro check && astro build",
+    "dev": "bun run sync-blog && astro dev",
+    "dev:watch": "bun scripts/watch-blog.ts",
+    "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "sync-blog": "bun scripts/sync-blog.ts",
+    "prebuild": "bun run sync-blog"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/node": "^9.5.0",
-    "@astrojs/react": "^4.4.0",
-    "@astrojs/tailwind": "^6.0.2",
-    "@astrojs/vercel": "^8.2.10",
-    "@nanostores/react": "^1.0.0",
-    "@radix-ui/react-slot": "^1.2.3",
-    "@radix-ui/react-switch": "^1.2.6",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "astro": "^5.14.5",
-    "autoprefixer": "^10.4.21",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "framer-motion": "^12.23.24",
-    "lucide-react": "^0.546.0",
-    "nanostores": "^1.0.1",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^3"
-  },
-  "devDependencies": {
-    "@types/node": "^24.8.0",
-    "tw-animate-css": "^1.3.8",
-    "typescript": "^5.9.3"
+    "@tailwindcss/vite": "^4.1.14",
+    "astro": "^5.14.1",
+    "tailwindcss": "^4.1.14"
   }
 }

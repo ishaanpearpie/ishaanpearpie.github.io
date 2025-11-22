@@ -1,9 +1,35 @@
+// @ts-check
 import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
-import vercel from '@astrojs/vercel';
 
+import tailwindcss from '@tailwindcss/vite';
+
+import { remarkObsidianLinks } from './src/plugins/remark-obsidian-links.js';
+
+// https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind()],
-  output: 'static',
-  adapter: vercel(),
+  server: {
+    host: true
+  },
+  vite: {
+    plugins: [tailwindcss()],
+    server: {
+      host: true,
+      allowedHosts: ["spaceship3000.milind.dev"]
+    }
+  },
+
+  markdown: {
+    remarkPlugins: [remarkObsidianLinks],
+    shikiConfig: {
+      theme: 'dracula',
+      wrap: true
+    }
+  },
+  
+  image: {
+    // Enable image optimization for all images
+    service: {
+      entrypoint: 'astro/assets/services/sharp'
+    }
+  }
 });
