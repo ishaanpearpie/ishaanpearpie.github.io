@@ -177,12 +177,14 @@
 
   /* Neovim block cursor style */
   .vim-cursor {
-    @apply inline-block px-1 animate-vim-blink;
+    @apply inline-block animate-vim-blink;
     background-color: var(--color-terminal-green);
     color: var(--bg-primary);
-    min-width: 0.5em;
-    height: 1.2em;
-    vertical-align: text-bottom;
+    width: 0.6em;
+    height: 1em;
+    vertical-align: baseline;
+    position: relative;
+    top: 0.1em;
   }
 
   /* Scanline effect for cyber aesthetic */

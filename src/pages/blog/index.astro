@@ -127,8 +127,8 @@ function getPostIcon(index: number): string {
         </div>
 
 
-        <h1 class="text-5xl md:text-7xl font-black mb-4">
-          <span class="cyber-text">My Thoughts</span><span class="vim-cursor ml-2"></span>
+        <h1 class="text-5xl md:text-7xl font-black mb-4 flex items-baseline">
+          <span class="cyber-text inline-block">My Thoughts</span><span class="vim-cursor ml-2 inline-block"></span>
         </h1>
 
         <!-- RSS Feed Link -->
@@ -147,7 +147,7 @@ function getPostIcon(index: number): string {
         </div>
 
 
-        <div class="mb-6">
+        <div class="mb-6 hidden md:block">
           <p class="text-lg font-mono text-[var(--text-secondary)] mb-2">
             <span class="text-terminal-green">milind@thoughts</span>:<span class="text-terminal-blue">~/blog</span>$ ls -la
           </p>
@@ -189,114 +189,196 @@ function getPostIcon(index: number): string {
           <p class="mt-4">$ echo "No posts yet... Coming soon!"</p>
         </div>
       ) : (
-        <div class="font-mono text-sm">
-          <!-- Total line (like ls -la shows) -->
-          <div class="text-[var(--text-tertiary)] mb-4 posts-total">
-            total {posts.length}
-          </div>
+        <div>
+          <!-- Desktop: ls -la style -->
+          <div class="font-mono text-sm hidden md:block">
+            <!-- Total line (like ls -la shows) -->
+            <div class="text-[var(--text-tertiary)] mb-4 posts-total">
+              total {posts.length}
+            </div>
 
-          <!-- Blog posts as ls -la entries -->
-          <div class="space-y-1">
-            {posts.map((post, index) => {
-              const colorClass = getTerminalColor(index);
-              const permissions = post.draft ? '-rw-r--r--' : '-rwxr-xr-x';
-              const formattedDate = formatLsDate(post.date);
-              
-              return (
-                <div class="group relative blog-post-item" data-tags={JSON.stringify(post.tags)}>
-                  <a
-                    href={post.url}
-                    class="block py-2 px-3 -mx-3 rounded hover:bg-[var(--bg-elevated)] transition-all duration-200"
-                  >
-                    <div class="grid grid-cols-[auto_auto_auto_auto_1fr] gap-3 items-center">
-                      <!-- Permissions -->
-                      <span class="text-[var(--text-tertiary)]">
-                        {permissions}
-                      </span>
-
-                      <!-- Owner -->
-                      <span class="text-[var(--text-tertiary)]">
-                        milind
-                      </span>
-
-                      <!-- Group -->
-                      <span class="text-[var(--text-tertiary)]">
-                        milind
-                      </span>
-
-                      <!-- Date -->
-                      <span class="text-[var(--text-tertiary)] whitespace-nowrap">
-                        {formattedDate}
-                      </span>
-
-                      <!-- File name with icon and badges -->
-                      <div class="flex items-center gap-2 min-w-0">
-                        <img 
-                          src={`https://cdn.simpleicons.org/${getPostIcon(index)}`}
-                          alt=""
-                          class="w-4 h-4 flex-shrink-0 opacity-80"
-                          style="filter: brightness(0) saturate(100%) invert(68%) sepia(77%) saturate(385%) hue-rotate(95deg) brightness(95%) contrast(91%);"
-                        />
-                        <span class={`text-${colorClass} font-semibold group-hover:underline decoration-${colorClass}/50 transition-all truncate`}>
-                          {post.title}
+            <!-- Blog posts as ls -la entries -->
+            <div class="space-y-1">
+              {posts.map((post, index) => {
+                const colorClass = getTerminalColor(index);
+                const permissions = post.draft ? '-rw-r--r--' : '-rwxr-xr-x';
+                const formattedDate = formatLsDate(post.date);
+                
+                return (
+                  <div class="group relative blog-post-item" data-tags={JSON.stringify(post.tags)}>
+                    <a
+                      href={post.url}
+                      class="block py-2 px-3 -mx-3 rounded hover:bg-[var(--bg-elevated)] transition-all duration-200"
+                    >
+                      <div class="grid grid-cols-[auto_auto_auto_auto_1fr] gap-3 items-center">
+                        <!-- Permissions -->
+                        <span class="text-[var(--text-tertiary)]">
+                          {permissions}
                         </span>
-                        {post.draft && (
-                          <span class="px-2 py-0.5 text-xs bg-terminal-yellow/20 text-terminal-yellow border border-terminal-yellow/50 rounded flex-shrink-0">
-                            draft
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </a>
 
-                  <!-- Hover preview card -->
-                  {(post.description || post.cover) && (
-                    <div class="absolute left-full ml-8 top-0 w-96 p-4 bg-[var(--bg-elevated)] border border-[var(--border-color)] rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none hidden xl:block">
-                      {post.cover && (
-                        <div class="mb-3 rounded-lg overflow-hidden border border-[var(--border-color)]">
-                          {typeof post.cover === 'string' ? (
-                            <img 
-                              src={post.cover} 
-                              alt={post.title}
-                              class="w-full h-40 object-cover"
-                            />
-                          ) : (
-                            <Image
-                              src={post.cover}
-                              alt={post.title}
-                              width={400}
-                              height={200}
-                              class="w-full h-40 object-cover"
-                            />
+                        <!-- Owner -->
+                        <span class="text-[var(--text-tertiary)]">
+                          milind
+                        </span>
+
+                        <!-- Group -->
+                        <span class="text-[var(--text-tertiary)]">
+                          milind
+                        </span>
+
+                        <!-- Date -->
+                        <span class="text-[var(--text-tertiary)] whitespace-nowrap">
+                          {formattedDate}
+                        </span>
+
+                        <!-- File name with icon and badges -->
+                        <div class="flex items-center gap-2 min-w-0">
+                          <img 
+                            src={`https://cdn.simpleicons.org/${getPostIcon(index)}`}
+                            alt=""
+                            class="w-4 h-4 flex-shrink-0 opacity-80"
+                            style="filter: brightness(0) saturate(100%) invert(68%) sepia(77%) saturate(385%) hue-rotate(95deg) brightness(95%) contrast(91%);"
+                          />
+                          <span class={`text-${colorClass} font-semibold group-hover:underline decoration-${colorClass}/50 transition-all truncate`}>
+                            {post.title}
+                          </span>
+                          {post.draft && (
+                            <span class="px-2 py-0.5 text-xs bg-terminal-yellow/20 text-terminal-yellow border border-terminal-yellow/50 rounded flex-shrink-0">
+                              draft
+                            </span>
                           )}
                         </div>
-                      )}
-                      {post.description && (
-                        <p class="text-sm text-[var(--text-secondary)] leading-relaxed">
-                          {post.description}
-                        </p>
-                      )}
-                      {post.tags.length > 0 && (
-                        <div class="flex flex-wrap gap-1 mt-3 pt-3 border-t border-[var(--border-color)]">
-                          {post.tags.map((tag: string) => (
-                            <span class="text-xs px-2 py-0.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded text-[var(--text-tertiary)]">
-                              #{tag}
-                            </span>
-                          ))}
-                        </div>
+                      </div>
+                    </a>
+
+                    <!-- Hover preview card -->
+                    {(post.description || post.cover) && (
+                      <div class="absolute left-full ml-8 top-0 w-96 p-4 bg-[var(--bg-elevated)] border border-[var(--border-color)] rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none hidden xl:block">
+                        {post.cover && (
+                          <div class="mb-3 rounded-lg overflow-hidden border border-[var(--border-color)]">
+                            {typeof post.cover === 'string' ? (
+                              <img 
+                                src={post.cover} 
+                                alt={post.title}
+                                class="w-full h-40 object-cover"
+                              />
+                            ) : (
+                              <Image
+                                src={post.cover}
+                                alt={post.title}
+                                width={400}
+                                height={200}
+                                class="w-full h-40 object-cover"
+                              />
+                            )}
+                          </div>
+                        )}
+                        {post.description && (
+                          <p class="text-sm text-[var(--text-secondary)] leading-relaxed">
+                            {post.description}
+                          </p>
+                        )}
+                        {post.tags.length > 0 && (
+                          <div class="flex flex-wrap gap-1 mt-3 pt-3 border-t border-[var(--border-color)]">
+                            {post.tags.map((tag: string) => (
+                              <span class="text-xs px-2 py-0.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded text-[var(--text-tertiary)]">
+                                #{tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <!-- Terminal footer -->
+            <div class="mt-8 pt-6 border-t border-[var(--border-color)] text-[var(--text-tertiary)]">
+              <p>
+                <span class="text-terminal-green">$</span> Found {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+              </p>
+            </div>
+          </div>
+
+          <!-- Mobile: Card style -->
+          <div class="md:hidden space-y-4">
+            {posts.map((post, index) => {
+              const colorClass = getTerminalColor(index);
+              
+              return (
+                <a
+                  href={post.url}
+                  class="blog-post-item block p-4 bg-[var(--bg-elevated)] border border-[var(--border-color)] rounded-lg hover:border-cyber-cyan transition-all hover-glow"
+                  data-tags={JSON.stringify(post.tags)}
+                >
+                  {post.cover && (
+                    <div class="mb-3 rounded-lg overflow-hidden border border-[var(--border-color)]">
+                      {typeof post.cover === 'string' ? (
+                        <img 
+                          src={post.cover} 
+                          alt={post.title}
+                          class="w-full h-40 object-cover"
+                        />
+                      ) : (
+                        <Image
+                          src={post.cover}
+                          alt={post.title}
+                          width={400}
+                          height={200}
+                          class="w-full h-40 object-cover"
+                        />
                       )}
                     </div>
                   )}
-                </div>
+                  
+                  <div class="flex items-center gap-2 mb-2">
+                    <img 
+                      src={`https://cdn.simpleicons.org/${getPostIcon(index)}`}
+                      alt=""
+                      class="w-4 h-4 flex-shrink-0 opacity-80"
+                      style="filter: brightness(0) saturate(100%) invert(68%) sepia(77%) saturate(385%) hue-rotate(95deg) brightness(95%) contrast(91%);"
+                    />
+                    <h2 class={`text-lg font-semibold text-${colorClass}`}>
+                      {post.title}
+                    </h2>
+                    {post.draft && (
+                      <span class="px-2 py-0.5 text-xs bg-terminal-yellow/20 text-terminal-yellow border border-terminal-yellow/50 rounded flex-shrink-0">
+                        draft
+                      </span>
+                    )}
+                  </div>
+
+                  {post.description && (
+                    <p class="text-sm text-[var(--text-secondary)] mb-3 line-clamp-2">
+                      {post.description}
+                    </p>
+                  )}
+
+                  <div class="flex items-center justify-between text-xs text-[var(--text-tertiary)] font-mono">
+                    <span>{post.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    {post.tags.length > 0 && (
+                      <div class="flex gap-1 flex-wrap">
+                        {post.tags.slice(0, 2).map((tag: string) => (
+                          <span class="px-2 py-0.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded">
+                            #{tag}
+                          </span>
+                        ))}
+                        {post.tags.length > 2 && (
+                          <span class="px-2 py-0.5">+{post.tags.length - 2}</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </a>
               );
             })}
-          </div>
 
-          <!-- Terminal footer -->
-          <div class="mt-8 pt-6 border-t border-[var(--border-color)] text-[var(--text-tertiary)]">
-            <p>
-              <span class="text-terminal-green">$</span> Found {posts.length} {posts.length === 1 ? 'post' : 'posts'}
-            </p>
+            <!-- Mobile footer -->
+            <div class="mt-6 pt-4 border-t border-[var(--border-color)] text-[var(--text-tertiary)] text-sm font-mono text-center posts-total-mobile">
+              {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+            </div>
           </div>
         </div>
       )}
@@ -333,6 +415,7 @@ function getPostIcon(index: number): string {
     const filterButtons = document.querySelectorAll('.tag-filter-btn');
     const blogPosts = document.querySelectorAll('.blog-post-item');
     const totalElement = document.querySelector('.posts-total');
+    const totalMobileElement = document.querySelector('.posts-total-mobile');
 
     filterButtons.forEach(button => {
       button.addEventListener('click', () => {
@@ -355,9 +438,14 @@ function getPostIcon(index: number): string {
           }
         });
 
-        // Update total count
+        // Update total count for desktop
         if (totalElement) {
           totalElement.textContent = `total ${visibleCount}`;
+        }
+
+        // Update total count for mobile
+        if (totalMobileElement) {
+          totalMobileElement.textContent = `${visibleCount} ${visibleCount === 1 ? 'post' : 'posts'}`;
         }
       });
     });
