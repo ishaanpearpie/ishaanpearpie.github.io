@@ -180,11 +180,11 @@
     @apply inline-block animate-vim-blink;
     background-color: var(--color-terminal-green);
     color: var(--bg-primary);
-    width: 0.6em;
-    height: 1em;
+    width: 0.5em;
+    height: 0.9em;
     vertical-align: baseline;
     position: relative;
-    top: 0.1em;
+    top: 0.05em;
   }
 
   /* Scanline effect for cyber aesthetic */
