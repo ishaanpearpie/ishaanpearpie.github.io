@@ -14,7 +14,7 @@ const { title, description, date, tags, url, cover, draft = false, index } = Ast
 
 // Helper function to get terminal color class based on index
 function getTerminalColor(idx: number): string {
-  const colors = ['terminal-blue', 'terminal-green', 'cyber-cyan', 'cyber-purple'];
+  const colors = ['cyber-cyan', 'cyber-purple', 'cyber-pink', 'neon-green'];
   return colors[idx % colors.length];
 }
 
@@ -38,7 +38,7 @@ function formatLsDate(date: Date): string {
 }
 
 const colorClass = getTerminalColor(index);
-const permissions = draft ? '-rw-r--r--' : '-rwxr-xr-x';
+const isDraft = draft;
 const formattedDate = formatLsDate(date);
 // Extract cover URL - handle both string URLs and Astro Image objects
 const coverUrl = typeof cover === 'string' ? cover : (cover?.src || '');
@@ -47,25 +47,29 @@ const coverUrl = typeof cover === 'string' ? cover : (cover?.src || '');
 <div class="group relative blog-post-item" data-tags={JSON.stringify(tags)}>
   <a
     href={url}
-    class="post-link block py-3 px-4 -mx-4 rounded hover:bg-[var(--bg-elevated)] transition-all duration-200"
+    class="post-link block py-1.5 px-4 -mx-4 rounded hover:bg-[var(--bg-elevated)] transition-all duration-200"
     data-post-title={title}
     data-post-description={description}
     data-post-cover={coverUrl}
     data-post-tags={JSON.stringify(tags)}
   >
-    <div class="grid grid-cols-[auto_auto_auto_1fr] gap-4 items-center">
-      <!-- Permissions -->
-      <span class="text-[var(--text-tertiary)] text-base">
-        {permissions}
+    <div class="grid grid-cols-[auto_auto_auto_1fr] gap-4 items-center font-jetbrains">
+      <!-- Permissions (colored by section) -->
+      <span class="text-base">
+        {isDraft ? (
+          <><span class="text-gray-400">.</span><span class="text-yellow-400">rw-</span><span class="text-green-400">r--</span><span class="text-cyan-400">r--</span></>
+        ) : (
+          <><span class="text-blue-400">d</span><span class="text-yellow-400">rwx</span><span class="text-green-400">r-x</span><span class="text-cyan-400">r-x</span></>
+        )}
       </span>
 
       <!-- Owner -->
-      <span class="text-[var(--text-tertiary)] text-base">
+      <span class="text-yellow-400 text-base">
         milind
       </span>
 
       <!-- Date -->
-      <span class="text-[var(--text-tertiary)] whitespace-nowrap text-base">
+      <span class="text-green-400 whitespace-nowrap text-base">
         {formattedDate}
       </span>
 
@@ -77,7 +81,7 @@ const coverUrl = typeof cover === 'string' ? cover : (cover?.src || '');
           class="w-5 h-5 flex-shrink-0 opacity-80"
           style="filter: brightness(0) saturate(100%) invert(68%) sepia(77%) saturate(385%) hue-rotate(95deg) brightness(95%) contrast(91%);"
         />
-        <span class={`text-${colorClass} font-bold group-hover:underline decoration-${colorClass}/50 transition-all text-xl`}>
+        <span class={`text-white font-bold group-hover:underline decoration-${colorClass} transition-all text-base`}>
           {title}
         </span>
         {draft && (
