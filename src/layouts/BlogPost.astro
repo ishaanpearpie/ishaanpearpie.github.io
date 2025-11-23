@@ -14,10 +14,12 @@ const formattedDate = date ? formatDateLong(parseCustomDate(date)) : '';
 
 // Handle banner image if it exists (supports both local Obsidian paths and URLs)
 let bannerImage: any = null;
+let bannerImageUrl: string | null = null;
 if (banner) {
   // Check if it's a URL (starts with http:// or https://)
   if (banner.startsWith('http://') || banner.startsWith('https://')) {
     bannerImage = banner;
+    bannerImageUrl = banner;
   } else {
     // Handle local Obsidian path (e.g., ./garrix.png or _assets/garrix.png)
     // Get the current file path to determine the slug
@@ -33,6 +35,8 @@ if (banner) {
       const localImage = images[bannerPath];
       if (localImage) {
         bannerImage = localImage.default;
+        // Create full URL for social media
+        bannerImageUrl = new URL(`/blog/${slug}/_assets/${banner.replace('./', '')}`, Astro.site).toString();
       }
     } catch (e) {
       console.warn('Banner image not found:', banner);
@@ -40,11 +44,21 @@ if (banner) {
   }
 }
 
+// Use banner image for social media, otherwise use favicon
+const socialImage = bannerImageUrl || `${Astro.site}favicon.svg`;
+
+// Create fun blog description
+const blogDescription = description || '💡 Dive into the digital rabbit hole! Tech tales, DevOps adventures, and code wisdom served with a side of chaos. Warning: May contain terrible jokes and actual useful information.';
+
 // Filter headings to only include h2 and h3 for TOC
 const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) || [];
 ---
 
-<Layout>
+<Layout 
+  title={title}
+  description={blogDescription}
+  image={socialImage}
+>
   <div class="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] overflow-y-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-16 lg:flex lg:gap-8 lg:items-start">
       <!-- Main content -->

@@ -23,10 +23,10 @@ export const personalInfo = {
     short: "Building fast backend systems and tinkering with Linux",
     long: `I'm a ${calculateAge("2004-04-15")} year old developer who gets way too excited about Linux, DevOps magic, system admin wizardry, and everything open source. When I'm not neck-deep in Neovim configs or homelabbing the night away, I'm either building blazingly fast backend systems or self-hosting things just because I can.
 
-Oh, and I run a 100k+ EDM community on Instagram called @plusxhub where I share my love for electronic music with the world. Because why not, right?`,
+Currently orchestrating chaos at scale with containers, because who needs stability when you can have Docker networks that make sense only to you?`,
   },
   
-  tagline: "Linux Enthusiast • DevOps Nerd • Backend Builder • EDM Aficionado",
+  tagline: "Linux Enthusiast • DevOps Nerd • Backend Builder • Homelab Wizard",
   
   social: [
     {
