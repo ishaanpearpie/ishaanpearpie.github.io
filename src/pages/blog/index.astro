@@ -81,7 +81,7 @@ posts.sort((a, b) => b.date.getTime() - a.date.getTime());
 // Get all unique tags from all posts
 const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
 
-// Helper function to format date like ls -la (e.g., "Sunday, 23 November 2025, 10:52")
+// Helper function to format date like ls -la (e.g., "Saturday, 22 November 2025")
 function formatLsDate(date: Date): string {
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -90,10 +90,8 @@ function formatLsDate(date: Date): string {
   const day = date.getDate();
   const month = months[date.getMonth()];
   const year = date.getFullYear();
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
   
-  return `${dayName}, ${day} ${month} ${year}, ${hours}:${minutes}`;
+  return `${dayName}, ${day} ${month} ${year}`;
 }
 
 // Helper function to get terminal color class based on index
@@ -147,19 +145,12 @@ function getPostIcon(index: number): string {
         </div>
 
 
-        <div class="mb-6 hidden md:block">
-          <p class="text-lg font-mono text-[var(--text-secondary)] mb-2">
-            <span class="text-terminal-green">milind@thoughts</span>:<span class="text-terminal-blue">~/blog</span>$ ls -la
-          </p>
-        </div>
-
-
-        <!-- Tags Filter -->
+        <!-- Tags Filter (above terminal) -->
         {allTags.length > 0 && (
-          <div class="mb-8">
+          <div class="mb-6 hidden md:block">
             <div class="flex items-center gap-3 mb-3">
               <span class="text-sm font-mono text-[var(--text-tertiary)]">
-                Filter by tag:
+                <span class="text-terminal-green">$</span> filter:
               </span>
             </div>
             <div class="flex flex-wrap gap-2">
@@ -181,6 +172,12 @@ function getPostIcon(index: number): string {
           </div>
         )}
 
+        <div class="mb-6 hidden md:block">
+          <p class="text-lg font-mono text-[var(--text-secondary)] mb-2">
+            <span class="text-terminal-green">milind@thoughts</span>:<span class="text-terminal-blue">~/blog</span>$ <span class="terminal-command"></span><span class="terminal-pipe"></span><span class="terminal-cursor">█</span>
+          </p>
+        </div>
+
       </div>
 
       {posts.length === 0 ? (
@@ -190,120 +187,91 @@ function getPostIcon(index: number): string {
         </div>
       ) : (
         <div>
-          <!-- Desktop: ls -la style -->
-          <div class="font-mono text-sm hidden md:block">
+            <!-- Desktop: ls -la style -->
+          <div class="font-mono text-base hidden md:block ls-output" style="opacity: 0;">
             <!-- Total line (like ls -la shows) -->
-            <div class="text-[var(--text-tertiary)] mb-4 posts-total">
+            <div class="text-[var(--text-tertiary)] mb-6 posts-total text-lg">
               total {posts.length}
             </div>
 
             <!-- Blog posts as ls -la entries -->
-            <div class="space-y-1">
+            <div class="space-y-2">
               {posts.map((post, index) => {
                 const colorClass = getTerminalColor(index);
                 const permissions = post.draft ? '-rw-r--r--' : '-rwxr-xr-x';
                 const formattedDate = formatLsDate(post.date);
+                // Extract cover URL - handle both string URLs and Astro Image objects
+                const coverUrl = typeof post.cover === 'string' ? post.cover : (post.cover?.src || '');
                 
                 return (
                   <div class="group relative blog-post-item" data-tags={JSON.stringify(post.tags)}>
                     <a
                       href={post.url}
-                      class="block py-2 px-3 -mx-3 rounded hover:bg-[var(--bg-elevated)] transition-all duration-200"
+                      class="post-link block py-3 px-4 -mx-4 rounded hover:bg-[var(--bg-elevated)] transition-all duration-200"
+                      data-post-title={post.title}
+                      data-post-description={post.description}
+                      data-post-cover={coverUrl}
+                      data-post-tags={JSON.stringify(post.tags)}
                     >
-                      <div class="grid grid-cols-[auto_auto_auto_auto_1fr] gap-3 items-center">
+                      <div class="grid grid-cols-[auto_auto_auto_1fr] gap-4 items-center">
                         <!-- Permissions -->
-                        <span class="text-[var(--text-tertiary)]">
+                        <span class="text-[var(--text-tertiary)] text-base">
                           {permissions}
                         </span>
 
                         <!-- Owner -->
-                        <span class="text-[var(--text-tertiary)]">
-                          milind
-                        </span>
-
-                        <!-- Group -->
-                        <span class="text-[var(--text-tertiary)]">
+                        <span class="text-[var(--text-tertiary)] text-base">
                           milind
                         </span>
 
                         <!-- Date -->
-                        <span class="text-[var(--text-tertiary)] whitespace-nowrap">
+                        <span class="text-[var(--text-tertiary)] whitespace-nowrap text-base">
                           {formattedDate}
                         </span>
 
                         <!-- File name with icon and badges -->
-                        <div class="flex items-center gap-2 min-w-0">
+                        <div class="flex items-center gap-3 min-w-0">
                           <img 
                             src={`https://cdn.simpleicons.org/${getPostIcon(index)}`}
                             alt=""
-                            class="w-4 h-4 flex-shrink-0 opacity-80"
+                            class="w-5 h-5 flex-shrink-0 opacity-80"
                             style="filter: brightness(0) saturate(100%) invert(68%) sepia(77%) saturate(385%) hue-rotate(95deg) brightness(95%) contrast(91%);"
                           />
-                          <span class={`text-${colorClass} font-semibold group-hover:underline decoration-${colorClass}/50 transition-all truncate`}>
+                          <span class={`text-${colorClass} font-bold group-hover:underline decoration-${colorClass}/50 transition-all text-xl`}>
                             {post.title}
                           </span>
                           {post.draft && (
-                            <span class="px-2 py-0.5 text-xs bg-terminal-yellow/20 text-terminal-yellow border border-terminal-yellow/50 rounded flex-shrink-0">
+                            <span class="px-2 py-1 text-sm bg-terminal-yellow/20 text-terminal-yellow border border-terminal-yellow/50 rounded flex-shrink-0">
                               draft
                             </span>
                           )}
                         </div>
                       </div>
                     </a>
-
-                    <!-- Hover preview card -->
-                    {(post.description || post.cover) && (
-                      <div class="absolute left-full ml-8 top-0 w-96 p-4 bg-[var(--bg-elevated)] border border-[var(--border-color)] rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none hidden xl:block">
-                        {post.cover && (
-                          <div class="mb-3 rounded-lg overflow-hidden border border-[var(--border-color)]">
-                            {typeof post.cover === 'string' ? (
-                              <img 
-                                src={post.cover} 
-                                alt={post.title}
-                                class="w-full h-40 object-cover"
-                              />
-                            ) : (
-                              <Image
-                                src={post.cover}
-                                alt={post.title}
-                                width={400}
-                                height={200}
-                                class="w-full h-40 object-cover"
-                              />
-                            )}
-                          </div>
-                        )}
-                        {post.description && (
-                          <p class="text-sm text-[var(--text-secondary)] leading-relaxed">
-                            {post.description}
-                          </p>
-                        )}
-                        {post.tags.length > 0 && (
-                          <div class="flex flex-wrap gap-1 mt-3 pt-3 border-t border-[var(--border-color)]">
-                            {post.tags.map((tag: string) => (
-                              <span class="text-xs px-2 py-0.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded text-[var(--text-tertiary)]">
-                                #{tag}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
                   </div>
                 );
               })}
             </div>
 
             <!-- Terminal footer -->
-            <div class="mt-8 pt-6 border-t border-[var(--border-color)] text-[var(--text-tertiary)]">
-              <p>
-                <span class="text-terminal-green">$</span> Found {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+            <div class="mt-8 text-[var(--text-tertiary)]">
+              <p class="found-posts-desktop">
+                <span class="text-terminal-green">$</span> Found <span class="posts-count">{posts.length}</span> <span class="posts-label">{posts.length === 1 ? 'post' : 'posts'}</span>
               </p>
             </div>
           </div>
 
+          <!-- Cursor-following hover card (desktop only) -->
+          <div id="hover-card" class="fixed w-96 p-4 bg-[var(--bg-elevated)] border border-[var(--border-color)] rounded-lg shadow-2xl opacity-0 invisible transition-opacity duration-200 z-50 pointer-events-none hidden md:block" style="left: 0; top: 0;">
+            <div id="hover-card-cover" class="mb-3 rounded-lg overflow-hidden border border-[var(--border-color)] hidden">
+              <img id="hover-card-image" src="" alt="" class="w-full h-40 object-cover" />
+            </div>
+            <p id="hover-card-description" class="text-sm text-[var(--text-secondary)] leading-relaxed"></p>
+            <div id="hover-card-tags" class="flex flex-wrap gap-1 mt-3 pt-3 border-t border-[var(--border-color)]"></div>
+          </div>
+
           <!-- Mobile: Card style -->
-          <div class="md:hidden space-y-4">
+          <div class="md:hidden space-y-4 mobile-cards" style="opacity: 0;">
             {posts.map((post, index) => {
               const colorClass = getTerminalColor(index);
               
@@ -379,6 +347,33 @@ function getPostIcon(index: number): string {
             <div class="mt-6 pt-4 border-t border-[var(--border-color)] text-[var(--text-tertiary)] text-sm font-mono text-center posts-total-mobile">
               {posts.length} {posts.length === 1 ? 'post' : 'posts'}
             </div>
+
+            <!-- Tags Filter (mobile) -->
+            {allTags.length > 0 && (
+              <div class="mt-6 pt-4 border-t border-[var(--border-color)]">
+                <div class="flex items-center gap-3 mb-3">
+                  <span class="text-sm font-mono text-[var(--text-tertiary)]">
+                    Filter by tag:
+                  </span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    class="tag-filter-btn px-3 py-1 text-sm font-mono bg-[var(--bg-elevated)] border border-[var(--border-color)] rounded hover:border-cyber-cyan transition-all active"
+                    data-tag="all"
+                  >
+                    all
+                  </button>
+                  {allTags.map((tag: string) => (
+                    <button
+                      class="tag-filter-btn px-3 py-1 text-sm font-mono bg-[var(--bg-elevated)] border border-[var(--border-color)] rounded hover:border-cyber-cyan transition-all"
+                      data-tag={tag}
+                    >
+                      #{tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -407,15 +402,103 @@ function getPostIcon(index: number): string {
   .blog-post-item.hidden {
     display: none;
   }
+
+  /* Terminal cursor blink */
+  .terminal-cursor {
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  /* Fade in animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes instantShow {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .ls-output.animate-in {
+    animation: instantShow 0.1s ease-out forwards;
+  }
+
+  .mobile-cards.animate-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
 </style>
 
 <script>
-  // Tag filtering functionality
+  // Typing animation for ls -la command
   document.addEventListener('DOMContentLoaded', () => {
+    const commandElement = document.querySelector('.terminal-command') as HTMLElement | null;
+    const cursorElement = document.querySelector('.terminal-cursor') as HTMLElement | null;
+    const lsOutput = document.querySelector('.ls-output') as HTMLElement | null;
+    const mobileCards = document.querySelector('.mobile-cards') as HTMLElement | null;
+    const command = 'ls -la';
+    let charIndex = 0;
+
+    // Type out the command character by character
+    function typeCommand() {
+      if (commandElement && charIndex < command.length) {
+        commandElement.textContent = command.slice(0, charIndex + 1);
+        charIndex++;
+        setTimeout(typeCommand, 100); // 100ms per character
+      } else {
+        // Command typing complete, hide cursor and show output
+        setTimeout(() => {
+          if (cursorElement) {
+            cursorElement.style.display = 'none';
+          }
+          
+          // Show ls output with instant animation
+          if (lsOutput) {
+            lsOutput.classList.add('animate-in');
+          }
+
+          // Show mobile cards with fade-in animation
+          if (mobileCards) {
+            mobileCards.classList.add('animate-in');
+          }
+        }, 200);
+      }
+    }
+
+    // Start typing animation
+    if (commandElement) {
+      setTimeout(typeCommand, 500); // Start after 500ms delay
+    } else {
+      // If no command element (mobile), just fade in the cards
+      if (mobileCards) {
+        setTimeout(() => {
+          mobileCards.classList.add('animate-in');
+        }, 300);
+      }
+    }
+
+    // Tag filtering functionality
     const filterButtons = document.querySelectorAll('.tag-filter-btn');
     const blogPosts = document.querySelectorAll('.blog-post-item');
-    const totalElement = document.querySelector('.posts-total');
-    const totalMobileElement = document.querySelector('.posts-total-mobile');
+    const totalElement = document.querySelector('.posts-total') as HTMLElement | null;
+    const totalMobileElement = document.querySelector('.posts-total-mobile') as HTMLElement | null;
+    const pipeElement = document.querySelector('.terminal-pipe') as HTMLElement | null;
+    const postsCountElement = document.querySelector('.posts-count') as HTMLElement | null;
+    const postsLabelElement = document.querySelector('.posts-label') as HTMLElement | null;
 
     filterButtons.forEach(button => {
       button.addEventListener('click', () => {
@@ -425,16 +508,31 @@ function getPostIcon(index: number): string {
         filterButtons.forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
 
-        // Filter posts
+        // Update the command to show grep pipe
+        if (pipeElement) {
+          if (selectedTag === 'all') {
+            pipeElement.textContent = '';
+          } else {
+            pipeElement.textContent = ` | grep "tag=${selectedTag}"`;
+            pipeElement.style.color = 'var(--color-terminal-yellow)';
+          }
+        }
+
+        // Filter posts - count only unique posts (desktop version only)
         let visibleCount = 0;
-        blogPosts.forEach(post => {
+        
+        blogPosts.forEach((post, index) => {
           const postTags = JSON.parse(post.getAttribute('data-tags') || '[]');
+          const postElement = post as HTMLElement;
           
           if (selectedTag === 'all' || postTags.includes(selectedTag)) {
-            post.classList.remove('hidden');
-            visibleCount++;
+            postElement.classList.remove('hidden');
+            // Only count desktop posts (first half of the array, since posts are duplicated for mobile)
+            if (index < blogPosts.length / 2) {
+              visibleCount++;
+            }
           } else {
-            post.classList.add('hidden');
+            postElement.classList.add('hidden');
           }
         });
 
@@ -443,9 +541,117 @@ function getPostIcon(index: number): string {
           totalElement.textContent = `total ${visibleCount}`;
         }
 
+        // Update found posts count
+        if (postsCountElement) {
+          postsCountElement.textContent = visibleCount.toString();
+        }
+        if (postsLabelElement) {
+          postsLabelElement.textContent = visibleCount === 1 ? 'post' : 'posts';
+        }
+
         // Update total count for mobile
         if (totalMobileElement) {
           totalMobileElement.textContent = `${visibleCount} ${visibleCount === 1 ? 'post' : 'posts'}`;
+        }
+      });
+    });
+
+    // Cursor-following hover card functionality
+    const hoverCard = document.getElementById('hover-card') as HTMLElement | null;
+    const hoverCardCover = document.getElementById('hover-card-cover') as HTMLElement | null;
+    const hoverCardImage = document.getElementById('hover-card-image') as HTMLImageElement | null;
+    const hoverCardDescription = document.getElementById('hover-card-description') as HTMLElement | null;
+    const hoverCardTags = document.getElementById('hover-card-tags') as HTMLElement | null;
+    const postLinks = document.querySelectorAll('.post-link');
+
+    let currentMouseX = 0;
+    let currentMouseY = 0;
+
+    // Track mouse position
+    document.addEventListener('mousemove', (e) => {
+      currentMouseX = e.clientX;
+      currentMouseY = e.clientY;
+
+      if (hoverCard && hoverCard.classList.contains('opacity-100')) {
+        // Position card near cursor with offset
+        const cardWidth = 384; // w-96 = 384px
+        const cardHeight = hoverCard.offsetHeight;
+        const offset = 20;
+
+        let left = currentMouseX + offset;
+        let top = currentMouseY + offset;
+
+        // Check if card goes off right edge
+        if (left + cardWidth > window.innerWidth) {
+          left = currentMouseX - cardWidth - offset;
+        }
+
+        // Check if card goes off bottom edge
+        if (top + cardHeight > window.innerHeight) {
+          top = currentMouseY - cardHeight - offset;
+        }
+
+        // Check if card goes off top edge
+        if (top < 0) {
+          top = offset;
+        }
+
+        // Check if card goes off left edge
+        if (left < 0) {
+          left = offset;
+        }
+
+        hoverCard.style.left = `${left}px`;
+        hoverCard.style.top = `${top}px`;
+      }
+    });
+
+    postLinks.forEach(link => {
+      link.addEventListener('mouseenter', (e) => {
+        const target = e.currentTarget as HTMLElement;
+        const cover = target.getAttribute('data-post-cover');
+        const description = target.getAttribute('data-post-description');
+        const tagsStr = target.getAttribute('data-post-tags');
+
+        if (!hoverCard || !hoverCardDescription || !hoverCardTags) return;
+
+        // Populate hover card
+        if (cover && cover !== '' && hoverCardCover && hoverCardImage) {
+          hoverCardImage.src = cover;
+          hoverCardCover.classList.remove('hidden');
+        } else if (hoverCardCover) {
+          hoverCardCover.classList.add('hidden');
+        }
+
+        if (description && hoverCardDescription) {
+          hoverCardDescription.textContent = description;
+          hoverCardDescription.classList.remove('hidden');
+        } else if (hoverCardDescription) {
+          hoverCardDescription.classList.add('hidden');
+        }
+
+        // Populate tags
+        if (tagsStr && hoverCardTags) {
+          const tags = JSON.parse(tagsStr);
+          if (tags.length > 0) {
+            hoverCardTags.innerHTML = tags.map((tag: string) => 
+              `<span class="text-xs px-2 py-0.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded text-[var(--text-tertiary)]">#${tag}</span>`
+            ).join('');
+            hoverCardTags.classList.remove('hidden');
+          } else {
+            hoverCardTags.classList.add('hidden');
+          }
+        }
+
+        // Show hover card
+        hoverCard.classList.remove('opacity-0', 'invisible');
+        hoverCard.classList.add('opacity-100', 'visible');
+      });
+
+      link.addEventListener('mouseleave', () => {
+        if (hoverCard) {
+          hoverCard.classList.remove('opacity-100', 'visible');
+          hoverCard.classList.add('opacity-0', 'invisible');
         }
       });
     });
