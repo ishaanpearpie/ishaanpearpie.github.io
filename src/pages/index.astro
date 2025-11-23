@@ -297,15 +297,53 @@ import { personalInfo, projects, experience, education, skills } from '../data/p
     scroll-behavior: smooth;
   }
 
-  /* Active nav indicator */
-  #section-nav a.active {
+  /* Active nav indicators - using each section's hover color */
+  #section-nav a[href="#hero"].active {
     border-color: var(--color-cyber-blue);
-    background-color: var(--color-cyber-blue);
-    background-opacity: 0.1;
+    background: oklch(0.7 0.25 250 / 0.15);
   }
-  
-  #section-nav a.active svg {
+  #section-nav a[href="#hero"].active svg {
     color: var(--color-cyber-blue);
+  }
+
+  #section-nav a[href="#about"].active {
+    border-color: var(--color-cyber-cyan);
+    background: oklch(0.75 0.18 195 / 0.15);
+  }
+  #section-nav a[href="#about"].active svg {
+    color: var(--color-cyber-cyan);
+  }
+
+  #section-nav a[href="#projects"].active {
+    border-color: var(--color-cyber-purple);
+    background: oklch(0.65 0.28 290 / 0.15);
+  }
+  #section-nav a[href="#projects"].active svg {
+    color: var(--color-cyber-purple);
+  }
+
+  #section-nav a[href="#experience"].active {
+    border-color: var(--color-neon-green);
+    background: oklch(0.8 0.22 145 / 0.15);
+  }
+  #section-nav a[href="#experience"].active svg {
+    color: var(--color-neon-green);
+  }
+
+  #section-nav a[href="#education"].active {
+    border-color: var(--color-cyber-pink);
+    background: oklch(0.7 0.24 340 / 0.15);
+  }
+  #section-nav a[href="#education"].active svg {
+    color: var(--color-cyber-pink);
+  }
+
+  #section-nav a[href="#skills"].active {
+    border-color: var(--color-neon-orange);
+    background: oklch(0.75 0.20 55 / 0.15);
+  }
+  #section-nav a[href="#skills"].active svg {
+    color: var(--color-neon-orange);
   }
 </style>
 

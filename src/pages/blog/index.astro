@@ -242,8 +242,7 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
 
   /* Tag filter active state */
   .tag-filter-btn.active {
-    background: var(--color-cyber-cyan);
-    background-opacity: 0.2;
+    background: oklch(0.75 0.18 195 / 0.15);
     border-color: var(--color-cyber-cyan);
     color: var(--color-cyber-cyan);
   }
