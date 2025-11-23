@@ -100,9 +100,9 @@ const coverUrl = typeof cover === 'string' ? cover : (cover?.src || '');
     </div>
 
     <!-- Mobile: Simplified style (date + icon + title) -->
-    <div class="flex md:hidden items-center gap-3 font-jetbrains">
+    <div class="flex md:hidden items-start gap-3 font-jetbrains">
       <!-- Date -->
-      <span class="text-green-400 whitespace-nowrap text-sm flex-shrink-0">
+      <span class="text-green-400 whitespace-nowrap text-sm flex-shrink-0 pt-0.5">
         {formattedDate}
       </span>
 
@@ -110,12 +110,12 @@ const coverUrl = typeof cover === 'string' ? cover : (cover?.src || '');
       <img 
         src={`https://cdn.simpleicons.org/${getPostIcon(index)}`}
         alt=""
-        class="w-4 h-4 flex-shrink-0 opacity-80"
+        class="w-4 h-4 flex-shrink-0 opacity-80 mt-0.5"
         style="filter: brightness(0) saturate(100%) invert(100%);"
       />
 
-      <!-- Title -->
-      <span class={`text-white font-medium group-hover:underline decoration-${colorClass} transition-all text-sm truncate`}>
+      <!-- Title - wraps on multiple lines -->
+      <span class={`text-white font-medium group-hover:underline decoration-${colorClass} transition-all text-sm break-words flex-1 min-w-0`}>
         {title}
       </span>
 
