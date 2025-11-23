@@ -1,7 +1,7 @@
 /**
  * Parse a date string in DD-MM-YYYY HH:mm A format to a Date object
  * @param dateString - Date string in format "DD-MM-YYYY HH:mm A" (e.g., "23-11-2025 03:10 PM")
- * @returns Date object
+ * @returns Date object (interprets time as IST/UTC+5:30)
  */
 export function parseCustomDate(dateString: string | Date): Date {
   // If already a Date object, return it
@@ -45,14 +45,16 @@ export function parseCustomDate(dateString: string | Date): Date {
     hours = 0;
   }
 
-  // Create date object (month is 0-indexed in JavaScript)
-  return new Date(
-    parseInt(year, 10),
-    parseInt(month, 10) - 1,
-    parseInt(day, 10),
-    hours,
-    parseInt(minute, 10)
-  );
+  // Create date object in IST (UTC+5:30)
+  // First create the date string in ISO format with IST timezone offset
+  const paddedMonth = month.padStart(2, '0');
+  const paddedDay = day.padStart(2, '0');
+  const paddedHours = hours.toString().padStart(2, '0');
+  const paddedMinutes = minute.padStart(2, '0');
+  
+  // IST is UTC+5:30, so we use +05:30 offset
+  const isoString = `${year}-${paddedMonth}-${paddedDay}T${paddedHours}:${paddedMinutes}:00+05:30`;
+  return new Date(isoString);
 }
 
 /**
