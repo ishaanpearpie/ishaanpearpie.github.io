@@ -1,5 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import BlogPostItem from '../../components/BlogPostItem.astro';
+import BlogPostCard from '../../components/BlogPostCard.astro';
 import { Image } from 'astro:assets';
 
 // Get all blog posts from the file system using import.meta.glob
@@ -80,31 +82,6 @@ posts.sort((a, b) => b.date.getTime() - a.date.getTime());
 
 // Get all unique tags from all posts
 const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
-
-// Helper function to format date like ls -la (e.g., "Saturday, 22 November 2025")
-function formatLsDate(date: Date): string {
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  
-  const dayName = days[date.getDay()];
-  const day = date.getDate();
-  const month = months[date.getMonth()];
-  const year = date.getFullYear();
-  
-  return `${dayName}, ${day} ${month} ${year}`;
-}
-
-// Helper function to get terminal color class based on index
-function getTerminalColor(index: number): string {
-  const colors = ['terminal-blue', 'terminal-green', 'cyber-cyan', 'cyber-purple'];
-  return colors[index % colors.length];
-}
-
-// Helper function to get icon for each blog post
-function getPostIcon(index: number): string {
-  const icons = ['markdown', 'readme', 'git', 'vim', 'gnubash', 'linux'];
-  return icons[index % icons.length];
-}
 ---
 
 <Layout title="Blog - Milind Madhukar">
@@ -197,61 +174,18 @@ function getPostIcon(index: number): string {
 
             <!-- Blog posts as ls -la entries -->
             <div class="space-y-2">
-              {posts.map((post, index) => {
-                const colorClass = getTerminalColor(index);
-                const permissions = post.draft ? '-rw-r--r--' : '-rwxr-xr-x';
-                const formattedDate = formatLsDate(post.date);
-                // Extract cover URL - handle both string URLs and Astro Image objects
-                const coverUrl = typeof post.cover === 'string' ? post.cover : (post.cover?.src || '');
-                
-                return (
-                  <div class="group relative blog-post-item" data-tags={JSON.stringify(post.tags)}>
-                    <a
-                      href={post.url}
-                      class="post-link block py-3 px-4 -mx-4 rounded hover:bg-[var(--bg-elevated)] transition-all duration-200"
-                      data-post-title={post.title}
-                      data-post-description={post.description}
-                      data-post-cover={coverUrl}
-                      data-post-tags={JSON.stringify(post.tags)}
-                    >
-                      <div class="grid grid-cols-[auto_auto_auto_1fr] gap-4 items-center">
-                        <!-- Permissions -->
-                        <span class="text-[var(--text-tertiary)] text-base">
-                          {permissions}
-                        </span>
-
-                        <!-- Owner -->
-                        <span class="text-[var(--text-tertiary)] text-base">
-                          milind
-                        </span>
-
-                        <!-- Date -->
-                        <span class="text-[var(--text-tertiary)] whitespace-nowrap text-base">
-                          {formattedDate}
-                        </span>
-
-                        <!-- File name with icon and badges -->
-                        <div class="flex items-center gap-3 min-w-0">
-                          <img 
-                            src={`https://cdn.simpleicons.org/${getPostIcon(index)}`}
-                            alt=""
-                            class="w-5 h-5 flex-shrink-0 opacity-80"
-                            style="filter: brightness(0) saturate(100%) invert(68%) sepia(77%) saturate(385%) hue-rotate(95deg) brightness(95%) contrast(91%);"
-                          />
-                          <span class={`text-${colorClass} font-bold group-hover:underline decoration-${colorClass}/50 transition-all text-xl`}>
-                            {post.title}
-                          </span>
-                          {post.draft && (
-                            <span class="px-2 py-1 text-sm bg-terminal-yellow/20 text-terminal-yellow border border-terminal-yellow/50 rounded flex-shrink-0">
-                              draft
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                );
-              })}
+              {posts.map((post, index) => (
+                <BlogPostItem
+                  title={post.title}
+                  description={post.description}
+                  date={post.date}
+                  tags={post.tags}
+                  url={post.url}
+                  cover={post.cover}
+                  draft={post.draft}
+                  index={index}
+                />
+              ))}
             </div>
 
             <!-- Terminal footer -->
@@ -273,76 +207,18 @@ function getPostIcon(index: number): string {
 
           <!-- Mobile: Card style -->
           <div class="md:hidden space-y-4 mobile-cards" style="opacity: 0;">
-            {posts.map((post, index) => {
-              const colorClass = getTerminalColor(index);
-              
-              return (
-                <a
-                  href={post.url}
-                  class="blog-post-item block p-4 bg-[var(--bg-elevated)] border border-[var(--border-color)] rounded-lg hover:border-cyber-cyan transition-all hover-glow"
-                  data-tags={JSON.stringify(post.tags)}
-                >
-                  {post.cover && (
-                    <div class="mb-3 rounded-lg overflow-hidden border border-[var(--border-color)]">
-                      {typeof post.cover === 'string' ? (
-                        <img 
-                          src={post.cover} 
-                          alt={post.title}
-                          class="w-full h-40 object-cover"
-                        />
-                      ) : (
-                        <Image
-                          src={post.cover}
-                          alt={post.title}
-                          width={400}
-                          height={200}
-                          class="w-full h-40 object-cover"
-                        />
-                      )}
-                    </div>
-                  )}
-                  
-                  <div class="flex items-center gap-2 mb-2">
-                    <img 
-                      src={`https://cdn.simpleicons.org/${getPostIcon(index)}`}
-                      alt=""
-                      class="w-4 h-4 flex-shrink-0 opacity-80"
-                      style="filter: brightness(0) saturate(100%) invert(68%) sepia(77%) saturate(385%) hue-rotate(95deg) brightness(95%) contrast(91%);"
-                    />
-                    <h2 class={`text-lg font-semibold text-${colorClass}`}>
-                      {post.title}
-                    </h2>
-                    {post.draft && (
-                      <span class="px-2 py-0.5 text-xs bg-terminal-yellow/20 text-terminal-yellow border border-terminal-yellow/50 rounded flex-shrink-0">
-                        draft
-                      </span>
-                    )}
-                  </div>
-
-                  {post.description && (
-                    <p class="text-sm text-[var(--text-secondary)] mb-3 line-clamp-2">
-                      {post.description}
-                    </p>
-                  )}
-
-                  <div class="flex items-center justify-between text-xs text-[var(--text-tertiary)] font-mono">
-                    <span>{post.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                    {post.tags.length > 0 && (
-                      <div class="flex gap-1 flex-wrap">
-                        {post.tags.slice(0, 2).map((tag: string) => (
-                          <span class="px-2 py-0.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded">
-                            #{tag}
-                          </span>
-                        ))}
-                        {post.tags.length > 2 && (
-                          <span class="px-2 py-0.5">+{post.tags.length - 2}</span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </a>
-              );
-            })}
+            {posts.map((post, index) => (
+              <BlogPostCard
+                title={post.title}
+                description={post.description}
+                date={post.date}
+                tags={post.tags}
+                url={post.url}
+                cover={post.cover}
+                draft={post.draft}
+                index={index}
+              />
+            ))}
 
             <!-- Mobile footer -->
             <div class="mt-6 pt-4 border-t border-[var(--border-color)] text-[var(--text-tertiary)] text-sm font-mono text-center posts-total-mobile">
