@@ -104,58 +104,45 @@ import { personalInfo, projects, experience, education, skills } from '../data/p
       </div>
 
       <div class="relative z-10 max-w-6xl mx-auto px-6 py-20 text-center">
-        <!-- Terminal-style header -->
-        <div class="mb-6 sm:mb-8">
-          <p class="text-sm sm:text-base md:text-lg font-mono text-[var(--text-secondary)] mb-2 text-left">
-            <span class="text-terminal-green">milind@portfolio</span>:<span class="text-terminal-blue">~</span>$ <span class="terminal-command"></span><span class="terminal-cursor">█</span>
-          </p>
-        </div>
-
         <!-- Name with cyber text effect -->
-        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black mb-6 tracking-tight">
-          <span class="cyber-text flex flex-col sm:flex-row items-center justify-center sm:gap-2">
-            <span class="inline-block">MILIND</span>
-            <span class="inline-block flex items-baseline">
-              MADHUKAR<VimCursor />
-            </span>
-          </span>
+        <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tight">
+          <span class="cyber-text">MILIND MADHUKAR</span>
         </h1>
 
         <!-- Tagline -->
-        <p class="text-lg sm:text-xl md:text-2xl text-[var(--text-secondary)] mb-6 sm:mb-8 font-medium px-4">
+        <p class="text-xl md:text-2xl text-[var(--text-secondary)] mb-8 font-medium">
           {personalInfo.tagline}
         </p>
 
         <!-- Bio -->
-        <p class="max-w-2xl mx-auto text-base sm:text-lg text-[var(--text-tertiary)] mb-10 sm:mb-12 leading-relaxed px-4">
+        <p class="max-w-2xl mx-auto text-lg text-[var(--text-tertiary)] mb-12 leading-relaxed">
           {personalInfo.bio.short}
         </p>
 
         <!-- CTA Buttons -->
-        <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-12 sm:mb-16">
+        <div class="flex flex-wrap items-center justify-center gap-4 mb-16">
           <a
             href="#about"
-            class="px-5 sm:px-8 py-2.5 sm:py-3 bg-cyber-blue/10 border-2 border-cyber-blue text-cyber-blue rounded-lg font-semibold hover-glow hover:bg-cyber-blue/20 transition-all duration-300 text-sm sm:text-base"
+            class="px-8 py-3 bg-cyber-blue/10 border-2 border-cyber-blue text-cyber-blue rounded-lg font-semibold hover-glow hover:bg-cyber-blue/20 transition-all duration-300"
           >
             About Me
           </a>
           <a
             href="/blog"
-            class="px-5 sm:px-8 py-2.5 sm:py-3 bg-cyber-purple/10 border-2 border-cyber-purple text-cyber-purple rounded-lg font-semibold hover-glow hover:bg-cyber-purple/20 transition-all duration-300 text-sm sm:text-base"
+            class="px-8 py-3 bg-cyber-purple/10 border-2 border-cyber-purple text-cyber-purple rounded-lg font-semibold hover-glow hover:bg-cyber-purple/20 transition-all duration-300"
           >
             Read My Blog
           </a>
         </div>
 
         <!-- Social Links -->
-        <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4">
+        <div class="flex flex-wrap items-center justify-center gap-4">
           {personalInfo.social.map((link) => (
             <SocialButton
               name={link.name}
               url={link.url}
               icon={link.icon}
               color={link.color}
-              size="md"
             />
           ))}
         </div>
