@@ -74,14 +74,14 @@ export async function GET(context: APIContext) {
         content = content.replace(/href="(\/[^"]+)"/g, `href="${siteUrl}$1"`);
       }
       
-      // Prepend cover image to content if banner exists
+      // Prepend banner to content if banner exists
       let finalContent = content;
       if (frontmatter.banner) {
-        let coverImageUrl = '';
+        let bannerUrl = '';
         
         // Check if banner is a URL
         if (frontmatter.banner.startsWith('http://') || frontmatter.banner.startsWith('https://')) {
-          coverImageUrl = frontmatter.banner;
+          bannerUrl = frontmatter.banner;
         } else {
           // Try to find the optimized image
           const bannerPath = frontmatter.banner.startsWith('./') 
@@ -95,15 +95,15 @@ export async function GET(context: APIContext) {
           if (imageModule) {
             // Get the optimized image
             const optimizedImage = await getImage({ src: imageModule.default, format: 'webp' });
-            coverImageUrl = `${siteUrl}${optimizedImage.src}`;
+            bannerUrl = `${siteUrl}${optimizedImage.src}`;
           } else {
             // Fallback to direct path if image not found
-            coverImageUrl = `${siteUrl}/blog/${post.slug}/${bannerPath}`;
+            bannerUrl = `${siteUrl}/blog/${post.slug}/${bannerPath}`;
           }
         }
         
-        if (coverImageUrl) {
-          finalContent = `<img src="${coverImageUrl}" alt="${frontmatter.title || 'Cover image'}" />${content}`;
+        if (bannerUrl) {
+          finalContent = `<img src="${bannerUrl}" alt="${frontmatter.title || 'Banner'}" />${content}`;
         }
       }
       

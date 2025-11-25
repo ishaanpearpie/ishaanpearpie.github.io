@@ -204,7 +204,7 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
 
           <!-- Cursor-following hover card (desktop only) -->
           <div id="hover-card" class="fixed w-96 p-4 bg-[var(--bg-elevated)] border border-[var(--border-color)] rounded-lg shadow-2xl opacity-0 invisible transition-opacity duration-200 z-50 pointer-events-none hidden md:block" style="left: 0; top: 0;">
-            <div id="hover-card-cover" class="mb-3 rounded-lg overflow-hidden border border-[var(--border-color)] hidden">
+            <div id="hover-card-banner" class="mb-3 rounded-lg overflow-hidden border border-[var(--border-color)] hidden">
               <img id="hover-card-image" src="" alt="" class="w-full h-40 object-cover" />
             </div>
             <p id="hover-card-description" class="text-sm text-[var(--text-secondary)] leading-relaxed"></p>
@@ -353,7 +353,7 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
 
     // Cursor-following hover card functionality
     const hoverCard = document.getElementById('hover-card') as HTMLElement | null;
-    const hoverCardCover = document.getElementById('hover-card-cover') as HTMLElement | null;
+    const hoverCardBanner = document.getElementById('hover-card-banner') as HTMLElement | null;
     const hoverCardImage = document.getElementById('hover-card-image') as HTMLImageElement | null;
     const hoverCardDescription = document.getElementById('hover-card-description') as HTMLElement | null;
     const hoverCardTags = document.getElementById('hover-card-tags') as HTMLElement | null;
@@ -404,7 +404,7 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
     postLinks.forEach(link => {
       link.addEventListener('mouseenter', (e) => {
         const target = e.currentTarget as HTMLElement;
-        const cover = target.getAttribute('data-post-cover');
+        const banner = target.getAttribute('data-post-cover');
         const description = target.getAttribute('data-post-description');
         const tagsStr = target.getAttribute('data-post-tags');
 
@@ -413,12 +413,12 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
         let hasContent = false;
 
         // Populate hover card
-        if (cover && cover !== '' && hoverCardCover && hoverCardImage) {
-          hoverCardImage.src = cover;
-          hoverCardCover.classList.remove('hidden');
+        if (banner && banner !== '' && hoverCardBanner && hoverCardImage) {
+          hoverCardImage.src = banner;
+          hoverCardBanner.classList.remove('hidden');
           hasContent = true;
-        } else if (hoverCardCover) {
-          hoverCardCover.classList.add('hidden');
+        } else if (hoverCardBanner) {
+          hoverCardBanner.classList.add('hidden');
         }
 
         if (description && hoverCardDescription) {

@@ -29,11 +29,11 @@ function getPostIcon(idx: number): string {
 
 // Helper function to get word count color based on count
 function getWordCountColor(count: number): string {
-  if (count < 500) return 'text-blue-400';
-  if (count < 1000) return 'text-purple-400';
-  if (count < 2000) return 'text-pink-400';
-  if (count < 3000) return 'text-orange-400';
-  return 'text-red-400';
+  if (count < 500) return 'text-blue-600 dark:text-blue-400';
+  if (count < 1000) return 'text-purple-600 dark:text-purple-400';
+  if (count < 2000) return 'text-pink-600 dark:text-pink-400';
+  if (count < 3000) return 'text-orange-600 dark:text-orange-400';
+  return 'text-red-600 dark:text-red-400';
 }
 
 const colorClass = getTerminalColor(index);
@@ -41,7 +41,7 @@ const isDraft = draft;
 const formattedDate = formatDateCompact(date);
 const wordCountFormatted = formatWordCount(wordCount);
 const wordCountColor = getWordCountColor(wordCount);
-// Extract cover URL - handle both string URLs and Astro Image objects
+// Extract banner URL - handle both string URLs and Astro Image objects
 const coverUrl = typeof cover === 'string' ? cover : (cover?.src || '');
 ---
 
@@ -59,14 +59,14 @@ const coverUrl = typeof cover === 'string' ? cover : (cover?.src || '');
       <!-- Permissions (colored by section) -->
       <span class="text-base">
         {isDraft ? (
-          <><span class="text-gray-400">.</span><span class="text-yellow-400">rw-</span><span class="text-green-400">r--</span><span class="text-cyan-400">r--</span></>
+          <><span class="text-gray-400 dark:text-gray-400">.</span><span class="text-yellow-600 dark:text-yellow-400">rw-</span><span class="text-green-600 dark:text-green-400">r--</span><span class="text-cyan-600 dark:text-cyan-400">r--</span></>
         ) : (
-          <><span class="text-blue-400">d</span><span class="text-yellow-400">rwx</span><span class="text-green-400">r-x</span><span class="text-cyan-400">r-x</span></>
+          <><span class="text-blue-600 dark:text-blue-400">d</span><span class="text-yellow-600 dark:text-yellow-400">rwx</span><span class="text-green-600 dark:text-green-400">r-x</span><span class="text-cyan-600 dark:text-cyan-400">r-x</span></>
         )}
       </span>
 
       <!-- Owner -->
-      <span class="text-yellow-400 text-base">
+      <span class="text-yellow-600 dark:text-yellow-400 text-base">
         milind
       </span>
 
@@ -76,7 +76,7 @@ const coverUrl = typeof cover === 'string' ? cover : (cover?.src || '');
       </span>
 
       <!-- Date -->
-      <span class="text-green-400 whitespace-nowrap text-base">
+      <span class="text-green-600 dark:text-green-400 whitespace-nowrap text-base">
         {formattedDate}
       </span>
 
@@ -85,10 +85,9 @@ const coverUrl = typeof cover === 'string' ? cover : (cover?.src || '');
         <img 
           src={`https://cdn.simpleicons.org/${getPostIcon(index)}`}
           alt=""
-          class="w-5 h-5 flex-shrink-0 opacity-80"
-          style="filter: brightness(0) saturate(100%) invert(100%);"
+          class="w-5 h-5 flex-shrink-0 opacity-80 blog-icon"
         />
-        <span class={`text-white font-bold group-hover:underline decoration-${colorClass} transition-all text-base`}>
+        <span class={`text-black dark:text-white font-bold group-hover:underline decoration-${colorClass} transition-all text-base`}>
           {title}
         </span>
         {draft && (
@@ -102,7 +101,7 @@ const coverUrl = typeof cover === 'string' ? cover : (cover?.src || '');
     <!-- Mobile: Simplified style (date + icon + title) -->
     <div class="flex md:hidden items-start gap-3 font-jetbrains">
       <!-- Date -->
-      <span class="text-green-400 whitespace-nowrap text-sm flex-shrink-0 pt-0.5">
+      <span class="text-green-600 dark:text-green-400 whitespace-nowrap text-sm flex-shrink-0 pt-0.5">
         {formattedDate}
       </span>
 
@@ -110,12 +109,11 @@ const coverUrl = typeof cover === 'string' ? cover : (cover?.src || '');
       <img 
         src={`https://cdn.simpleicons.org/${getPostIcon(index)}`}
         alt=""
-        class="w-4 h-4 flex-shrink-0 opacity-80 mt-0.5"
-        style="filter: brightness(0) saturate(100%) invert(100%);"
+        class="w-4 h-4 flex-shrink-0 opacity-80 mt-0.5 blog-icon"
       />
 
       <!-- Title - wraps on multiple lines -->
-      <span class={`text-white font-medium group-hover:underline decoration-${colorClass} transition-all text-sm break-words flex-1 min-w-0`}>
+      <span class={`text-black dark:text-white font-medium group-hover:underline decoration-${colorClass} transition-all text-sm break-words flex-1 min-w-0`}>
         {title}
       </span>
 
@@ -127,3 +125,14 @@ const coverUrl = typeof cover === 'string' ? cover : (cover?.src || '');
     </div>
   </a>
 </div>
+
+<style>
+  /* Filter icons to be white in dark mode, black in light mode */
+  :global(.dark) .blog-icon {
+    filter: brightness(0) saturate(100%) invert(100%);
+  }
+  
+  :global(:root:not(.dark)) .blog-icon {
+    filter: brightness(0) saturate(100%) invert(0%);
+  }
+</style>

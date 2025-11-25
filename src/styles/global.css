@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Cyber Aesthetic Color Palette - these create utilities like bg-cyber-blue, text-cyber-purple, etc. */
   --color-cyber-blue: oklch(0.7 0.25 250);
