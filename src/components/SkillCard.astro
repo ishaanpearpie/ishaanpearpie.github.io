@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+
 interface Skill {
   name: string;
   icon: string;
@@ -21,11 +23,14 @@ const { category, skills } = Astro.props;
     {skills.map((skill) => (
       <li class="group flex items-center gap-3 transition-all duration-300">
         <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--bg-primary)] border border-[var(--border-color)] group-hover:border-cyber-cyan transition-all duration-300">
-          <img 
+          <Image 
             src={`https://cdn.simpleicons.org/${skill.icon}`}
             alt={skill.name}
+            width={20}
+            height={20}
             class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity"
             style="filter: brightness(0) saturate(100%) invert(64%) sepia(85%) saturate(2076%) hue-rotate(159deg) brightness(101%) contrast(101%);"
+            loading="lazy"
           />
         </div>
         <span class="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] flex-1 transition-colors">
