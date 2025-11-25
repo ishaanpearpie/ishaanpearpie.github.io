@@ -4,6 +4,7 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
 import { remarkObsidianLinks } from './src/plugins/remark-obsidian-links.js';
+import { remarkObsidianExcalidraw } from './src/plugins/remark-obsidian-excalidraw.js';
 
 // https://astro.build/config
 export default defineConfig({
@@ -20,7 +21,7 @@ export default defineConfig({
   },
 
   markdown: {
-    remarkPlugins: [remarkObsidianLinks],
+    remarkPlugins: [remarkObsidianExcalidraw, remarkObsidianLinks],
     shikiConfig: {
       theme: 'dracula',
       wrap: true

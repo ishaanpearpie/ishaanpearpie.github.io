@@ -489,6 +489,44 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
     color: var(--text-secondary);
   }
 
+  /* Excalidraw theme-aware image container */
+  .excalidraw-container {
+    position: relative;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 50px rgba(156, 89, 255, 0.2);
+  }
+
+  .excalidraw-container img {
+    width: 100%;
+    height: auto;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Show light version by default (light mode) */
+  .excalidraw-container .excalidraw-light {
+    display: block !important;
+  }
+
+  .excalidraw-container .excalidraw-dark {
+    display: none !important;
+  }
+
+  /* Show dark version in dark mode */
+  .dark .excalidraw-container .excalidraw-light {
+    display: none !important;
+  }
+
+  .dark .excalidraw-container .excalidraw-dark {
+    display: block !important;
+  }
+
   /* TOC Active Link Styles */
   .toc-link.active {
     color: var(--color-cyber-purple);
