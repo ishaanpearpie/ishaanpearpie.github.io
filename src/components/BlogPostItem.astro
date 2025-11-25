@@ -8,12 +8,15 @@ interface Props {
   tags: string[];
   url: string;
   cover?: string | any;
+  coverLight?: any;
+  coverDark?: any;
+  isExcalidrawCover?: boolean;
   draft?: boolean;
   index: number;
   wordCount: number;
 }
 
-const { title, description, date, tags, url, cover, draft = false, index, wordCount } = Astro.props;
+const { title, description, date, tags, url, cover, coverLight, coverDark, isExcalidrawCover = false, draft = false, index, wordCount } = Astro.props;
 
 // Helper function to get terminal color class based on index
 function getTerminalColor(idx: number): string {
@@ -43,6 +46,8 @@ const wordCountFormatted = formatWordCount(wordCount);
 const wordCountColor = getWordCountColor(wordCount);
 // Extract banner URL - handle both string URLs and Astro Image objects
 const coverUrl = typeof cover === 'string' ? cover : (cover?.src || '');
+const coverLightUrl = coverLight?.src || '';
+const coverDarkUrl = coverDark?.src || '';
 ---
 
 <div class="group relative blog-post-item" data-tags={JSON.stringify(tags)}>
@@ -52,6 +57,9 @@ const coverUrl = typeof cover === 'string' ? cover : (cover?.src || '');
     data-post-title={title}
     data-post-description={description}
     data-post-cover={coverUrl}
+    data-post-cover-light={coverLightUrl}
+    data-post-cover-dark={coverDarkUrl}
+    data-post-is-excalidraw={isExcalidrawCover}
     data-post-tags={JSON.stringify(tags)}
   >
     <!-- Desktop: Full ls -la style -->

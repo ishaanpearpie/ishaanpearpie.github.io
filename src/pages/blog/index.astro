@@ -40,7 +40,7 @@ const publishedPosts = blogPosts.filter((post) => {
 });
 
 // Process and sort posts by date
-const images = import.meta.glob<{ default: ImageMetadata }>('./**/_assets/*.{png,jpg,jpeg,gif,webp,svg}', { eager: true });
+const images = import.meta.glob<{ default: ImageMetadata }>('./**/_assets/**/*.{png,jpg,jpeg,gif,webp,svg}', { eager: true });
 
 const posts = publishedPosts.map((post) => {
   const frontmatter = post.frontmatter || {};
@@ -52,20 +52,53 @@ const posts = publishedPosts.map((post) => {
   
   // Handle banner image if it exists (supports both local Obsidian paths and URLs)
   let bannerImage: any = null;
+  let bannerLightImage: any = null;
+  let bannerDarkImage: any = null;
+  let isExcalidrawBanner = false;
+  
   if (frontmatter.banner) {
+    // Extract filename from Obsidian link format [[filename]]
+    let bannerFilename = frontmatter.banner;
+    if (frontmatter.banner.startsWith('[[') && frontmatter.banner.endsWith(']]')) {
+      bannerFilename = frontmatter.banner.slice(2, -2);
+    }
+
     // Check if it's a URL (starts with http:// or https://)
-    if (frontmatter.banner.startsWith('http://') || frontmatter.banner.startsWith('https://')) {
-      bannerImage = frontmatter.banner;
+    if (bannerFilename.startsWith('http://') || bannerFilename.startsWith('https://')) {
+      bannerImage = bannerFilename;
     } else {
-      // Handle local Obsidian path (e.g., ./garrix.png or _assets/garrix.png)
-      const bannerPath = frontmatter.banner.startsWith('./') 
-        ? `./${slug}/_assets/${frontmatter.banner.slice(2)}`
-        : `./${slug}/_assets/${frontmatter.banner}`;
-      const localImage = images[bannerPath];
-      if (localImage) {
-        bannerImage = localImage.default;
+      // Check if this is an Excalidraw image (ends with .excalidraw.dark or .excalidraw.light)
+      const excalidrawDarkMatch = bannerFilename.match(/^(.+\.excalidraw)\.dark(\.png)?$/);
+      const excalidrawLightMatch = bannerFilename.match(/^(.+\.excalidraw)\.light(\.png)?$/);
+      
+      if (excalidrawDarkMatch || excalidrawLightMatch) {
+        isExcalidrawBanner = true;
+        // Load both variants for theme-aware display
+        const baseName = excalidrawDarkMatch ? excalidrawDarkMatch[1] : excalidrawLightMatch[1];
+        const lightPath = `./${slug}/_assets/excalidraw/${baseName}.light.png`;
+        const darkPath = `./${slug}/_assets/excalidraw/${baseName}.dark.png`;
+        
+        const lightImageModule = images[lightPath];
+        const darkImageModule = images[darkPath];
+        
+        if (lightImageModule) {
+          bannerLightImage = lightImageModule.default;
+        }
+        if (darkImageModule) {
+          bannerDarkImage = darkImageModule.default;
+        }
+        
+        // Use light as default fallback for cover
+        bannerImage = bannerLightImage;
       } else {
-        console.warn(`Banner image not found for ${slug}:`, frontmatter.banner);
+        // Handle local Obsidian path (e.g., ./garrix.png or _assets/garrix.png)
+        const bannerPath = bannerFilename.startsWith('./') 
+          ? `./${slug}/_assets/${bannerFilename.slice(2)}`
+          : `./${slug}/_assets/${bannerFilename}`;
+        const localImage = images[bannerPath];
+        if (localImage) {
+          bannerImage = localImage.default;
+        }
       }
     }
   }
@@ -78,6 +111,9 @@ const posts = publishedPosts.map((post) => {
     date: frontmatter.date ? parseCustomDate(frontmatter.date) : new Date(),
     tags: (frontmatter.tags || []) as string[],
     cover: bannerImage,
+    coverLight: bannerLightImage,
+    coverDark: bannerDarkImage,
+    isExcalidrawCover: isExcalidrawBanner,
     draft: frontmatter.draft || false,
     wordCount,
   };
@@ -194,6 +230,9 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
                   tags={post.tags}
                   url={post.url}
                   cover={post.cover}
+                  coverLight={post.coverLight}
+                  coverDark={post.coverDark}
+                  isExcalidrawCover={post.isExcalidrawCover}
                   draft={post.draft}
                   index={index}
                   wordCount={post.wordCount}
@@ -205,7 +244,8 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
           <!-- Cursor-following hover card (desktop only) -->
           <div id="hover-card" class="fixed w-96 p-4 bg-[var(--bg-elevated)] border border-[var(--border-color)] rounded-lg shadow-2xl opacity-0 invisible transition-opacity duration-200 z-50 pointer-events-none hidden md:block" style="left: 0; top: 0;">
             <div id="hover-card-banner" class="mb-3 rounded-lg overflow-hidden border border-[var(--border-color)] hidden">
-              <img id="hover-card-image" src="" alt="" class="w-full h-40 object-cover" />
+              <img id="hover-card-image-light" src="" alt="" class="w-full h-40 object-cover hover-card-light" />
+              <img id="hover-card-image-dark" src="" alt="" class="w-full h-40 object-cover hover-card-dark hidden" />
             </div>
             <p id="hover-card-description" class="text-sm text-[var(--text-secondary)] leading-relaxed"></p>
             <div id="hover-card-tags" class="flex flex-wrap gap-1 mt-3 pt-3 border-t border-[var(--border-color)]"></div>
@@ -223,6 +263,23 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
   a:hover .text-cyber-cyan,
   a:hover .text-cyber-purple {
     filter: brightness(1.3);
+  }
+
+  /* Hover card theme-aware images */
+  .hover-card-light {
+    display: block;
+  }
+  
+  .hover-card-dark {
+    display: none;
+  }
+  
+  :global(.dark) .hover-card-light {
+    display: none;
+  }
+  
+  :global(.dark) .hover-card-dark {
+    display: block;
   }
 
   /* Tag filter active state */
@@ -354,7 +411,8 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
     // Cursor-following hover card functionality
     const hoverCard = document.getElementById('hover-card') as HTMLElement | null;
     const hoverCardBanner = document.getElementById('hover-card-banner') as HTMLElement | null;
-    const hoverCardImage = document.getElementById('hover-card-image') as HTMLImageElement | null;
+    const hoverCardImageLight = document.getElementById('hover-card-image-light') as HTMLImageElement | null;
+    const hoverCardImageDark = document.getElementById('hover-card-image-dark') as HTMLImageElement | null;
     const hoverCardDescription = document.getElementById('hover-card-description') as HTMLElement | null;
     const hoverCardTags = document.getElementById('hover-card-tags') as HTMLElement | null;
     const postLinks = document.querySelectorAll('.post-link');
@@ -405,6 +463,9 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
       link.addEventListener('mouseenter', (e) => {
         const target = e.currentTarget as HTMLElement;
         const banner = target.getAttribute('data-post-cover');
+        const bannerLight = target.getAttribute('data-post-cover-light');
+        const bannerDark = target.getAttribute('data-post-cover-dark');
+        const isExcalidraw = target.getAttribute('data-post-is-excalidraw') === 'true';
         const description = target.getAttribute('data-post-description');
         const tagsStr = target.getAttribute('data-post-tags');
 
@@ -412,9 +473,19 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
 
         let hasContent = false;
 
-        // Populate hover card
-        if (banner && banner !== '' && hoverCardBanner && hoverCardImage) {
-          hoverCardImage.src = banner;
+        // Populate hover card banner
+        if (isExcalidraw && bannerLight && bannerDark && hoverCardBanner && hoverCardImageLight && hoverCardImageDark) {
+          // Excalidraw image - show both light and dark variants
+          hoverCardImageLight.src = bannerLight;
+          hoverCardImageDark.src = bannerDark;
+          hoverCardBanner.classList.remove('hidden');
+          hasContent = true;
+        } else if (banner && banner !== '' && hoverCardBanner && hoverCardImageLight) {
+          // Regular image - show only in light slot
+          hoverCardImageLight.src = banner;
+          if (hoverCardImageDark) {
+            hoverCardImageDark.src = '';
+          }
           hoverCardBanner.classList.remove('hidden');
           hasContent = true;
         } else if (hoverCardBanner) {

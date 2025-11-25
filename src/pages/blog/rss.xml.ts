@@ -10,7 +10,7 @@ export async function GET(context: APIContext) {
   const allPosts = import.meta.glob('./**/index.md', { eager: true });
   
   // Get all blog images for optimization
-  const allImages = import.meta.glob<{ default: ImageMetadata }>('./**/_assets/*.{png,jpg,jpeg,gif,webp,svg}', { eager: true });
+  const allImages = import.meta.glob<{ default: ImageMetadata }>('./**/_assets/**/*.{png,jpg,jpeg,gif,webp,svg}', { eager: true });
   
   // Check if we're in development mode
   const isDev = import.meta.env.DEV;
@@ -79,26 +79,51 @@ export async function GET(context: APIContext) {
       if (frontmatter.banner) {
         let bannerUrl = '';
         
+        // Extract filename from Obsidian link format [[filename]]
+        let bannerFilename = frontmatter.banner;
+        if (frontmatter.banner.startsWith('[[') && frontmatter.banner.endsWith(']]')) {
+          bannerFilename = frontmatter.banner.slice(2, -2);
+        }
+        
         // Check if banner is a URL
-        if (frontmatter.banner.startsWith('http://') || frontmatter.banner.startsWith('https://')) {
-          bannerUrl = frontmatter.banner;
+        if (bannerFilename.startsWith('http://') || bannerFilename.startsWith('https://')) {
+          bannerUrl = bannerFilename;
         } else {
-          // Try to find the optimized image
-          const bannerPath = frontmatter.banner.startsWith('./') 
-            ? frontmatter.banner.slice(2)
-            : frontmatter.banner;
+          // Check if this is an Excalidraw image (ends with .excalidraw.dark or .excalidraw.light)
+          const excalidrawDarkMatch = bannerFilename.match(/^(.+\.excalidraw)\.dark(\.png)?$/);
+          const excalidrawLightMatch = bannerFilename.match(/^(.+\.excalidraw)\.light(\.png)?$/);
           
-          // The glob pattern returns paths like './{slug}/_assets/{filename}'
-          const imagePath = `./${post.slug}/_assets/${bannerPath}`;
-          const imageModule = allImages[imagePath];
-          
-          if (imageModule) {
-            // Get the optimized image
-            const optimizedImage = await getImage({ src: imageModule.default, format: 'webp' });
-            bannerUrl = `${siteUrl}${optimizedImage.src}`;
+          if (excalidrawDarkMatch || excalidrawLightMatch) {
+            // For RSS, use the light variant by default (better for most RSS readers)
+            const baseName = excalidrawDarkMatch ? excalidrawDarkMatch[1] : excalidrawLightMatch[1];
+            const lightPath = `./${post.slug}/_assets/excalidraw/${baseName}.light.png`;
+            
+            const imageModule = allImages[lightPath];
+            if (imageModule) {
+              const optimizedImage = await getImage({ src: imageModule.default, format: 'webp' });
+              bannerUrl = `${siteUrl}${optimizedImage.src}`;
+            } else {
+              // Fallback to direct path if image not found
+              bannerUrl = `${siteUrl}/blog/${post.slug}/_assets/excalidraw/${baseName}.light.png`;
+            }
           } else {
-            // Fallback to direct path if image not found
-            bannerUrl = `${siteUrl}/blog/${post.slug}/${bannerPath}`;
+            // Regular image handling
+            const bannerPath = bannerFilename.startsWith('./') 
+              ? bannerFilename.slice(2)
+              : bannerFilename;
+            
+            // The glob pattern returns paths like './{slug}/_assets/{filename}'
+            const imagePath = `./${post.slug}/_assets/${bannerPath}`;
+            const imageModule = allImages[imagePath];
+            
+            if (imageModule) {
+              // Get the optimized image
+              const optimizedImage = await getImage({ src: imageModule.default, format: 'webp' });
+              bannerUrl = `${siteUrl}${optimizedImage.src}`;
+            } else {
+              // Fallback to direct path if image not found
+              bannerUrl = `${siteUrl}/blog/${post.slug}/${bannerPath}`;
+            }
           }
         }
         
