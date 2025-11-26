@@ -3,7 +3,7 @@ import { visit } from 'unist-util-visit';
 /**
  * Remark plugin to convert Obsidian-style wikilinks to standard markdown syntax
  * Converts: 
- * - ![[image.png]] to optimized Astro Image component syntax
+ * - ![[image.png]] to ObsidianImage component with zoom functionality
  * - [[page-name|Display Text]] to markdown links
  * - [[page-name]] to markdown links
  */
@@ -24,7 +24,7 @@ export function remarkObsidianImage() {
         let match;
         
         while ((match = combinedRegex.exec(node.value)) !== null) {
-          const [fullMatch, imageFilename, imageExt, linkPath, linkText] = match;
+          const [fullMatch, imageFilename, , linkPath, linkText] = match;
           
           // Add text before the match
           if (match.index > lastIndex) {
@@ -34,12 +34,24 @@ export function remarkObsidianImage() {
             });
           }
           
-          // Handle image wikilinks
+          // Handle image wikilinks - convert to ObsidianImage component
           if (imageFilename) {
             segments.push({
-              type: 'image',
-              url: `./assets/${imageFilename}`,
-              alt: imageFilename.replace(/\.(png|jpg|jpeg|gif|webp|avif|svg)$/i, ''),
+              type: 'mdxJsxFlowElement',
+              name: 'ObsidianImage',
+              attributes: [
+                {
+                  type: 'mdxJsxAttribute',
+                  name: 'src',
+                  value: `./assets/${imageFilename}`
+                },
+                {
+                  type: 'mdxJsxAttribute',
+                  name: 'alt',
+                  value: imageFilename.replace(/\.(png|jpg|jpeg|gif|webp|avif|svg)$/i, '')
+                }
+              ],
+              children: []
             });
           }
           // Handle internal link wikilinks

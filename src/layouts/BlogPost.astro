@@ -409,13 +409,13 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
   }
   
   .blog-content img {
-    border-radius: 1rem;
-    margin-top: 3rem;
-    margin-bottom: 3rem;
+    border-radius: 0.75rem;
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
     width: 100%;
     height: auto;
     border: 1px solid var(--border-color);
-    box-shadow: 0 20px 50px var(--color-cyber-purple);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
   .blog-content ul,
@@ -584,6 +584,159 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
   html {
     scroll-behavior: smooth;
   }
+
+  /* Blog Image Modal Styles */
+  .blog-image-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .blog-image-modal.active {
+    display: flex;
+    opacity: 1;
+  }
+
+  .blog-image-modal .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+  }
+
+  .blog-image-modal .modal-content {
+    position: relative;
+    width: 95vw;
+    height: 95vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+  }
+
+  .blog-image-modal .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    color: white;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .blog-image-modal .modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+  }
+
+  .blog-image-modal .modal-image-container {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .blog-image-modal .modal-image {
+    max-width: 100%;
+    max-height: 85vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+  }
+
+  .blog-image-modal .modal-image.magnifying {
+    cursor: none;
+  }
+
+  .blog-image-modal .magnify-lens {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border: 3px solid white;
+    border-radius: 50%;
+    pointer-events: none;
+    display: none;
+    background-repeat: no-repeat;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.2);
+    z-index: 100;
+    overflow: hidden;
+  }
+
+  .blog-image-modal .magnify-lens.active {
+    display: block;
+  }
+
+  .blog-image-modal .modal-instructions {
+    position: absolute;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .blog-image-modal .instruction-badge {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 2rem;
+    padding: 0.5rem 1.25rem;
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    animation: fadeInDown 0.3s ease;
+  }
+
+  .blog-image-modal .hidden {
+    display: none !important;
+  }
+
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .blog-image-wrapper {
+    transition: all 0.3s ease;
+  }
+
+  .blog-image-wrapper:hover img {
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 640px) {
+    .blog-image-modal .modal-image-container {
+      max-width: 95%;
+    }
+
+    .blog-image-modal .instruction-badge {
+      font-size: 0.75rem;
+      padding: 0.375rem 1rem;
+    }
+  }
 </style>
 
 <script>
@@ -627,5 +780,234 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
   }, observerOptions);
 
   headingElements.forEach(heading => observer.observe(heading));
+
+  // Enhanced image zoom functionality
+  function enhanceBlogImages() {
+    const blogImages = document.querySelectorAll('.blog-content img');
+    
+    blogImages.forEach((imgEl, index) => {
+      const img = imgEl as HTMLImageElement;
+      
+      // Skip if already enhanced
+      if (img.hasAttribute('data-zoom-enhanced')) return;
+      
+      img.setAttribute('data-zoom-enhanced', 'true');
+      const imageId = `blog-img-${index}`;
+      
+      // Wrap image in a container with cursor pointer
+      const wrapper = document.createElement('div');
+      wrapper.className = 'blog-image-wrapper';
+      wrapper.style.cssText = 'position: relative; cursor: zoom-in;';
+      const parent = img.parentNode;
+      if (parent) {
+        parent.insertBefore(wrapper, img);
+        wrapper.appendChild(img);
+      }
+      
+      // Create modal
+      const modal = document.createElement('div');
+      modal.id = `modal-${imageId}`;
+      modal.className = 'blog-image-modal';
+      modal.innerHTML = `
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+          <div class="modal-instructions">
+            <div class="instruction-badge" data-desktop-hint>
+              Click & hold to activate magnifying glass
+            </div>
+            <div class="instruction-badge hidden" data-mobile-hint>
+              Pinch to zoom
+            </div>
+            <div class="instruction-badge hidden" data-magnify-hint>
+              Scroll to zoom in/out
+            </div>
+          </div>
+          <button class="modal-close" aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          <div class="modal-image-container">
+            <img src="${img.src}" alt="${img.alt}" class="modal-image" data-full-image />
+            <div class="magnify-lens" data-lens></div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      
+      // Detect touch device
+      const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      
+      // Modal functionality
+      const modalBackdrop = modal.querySelector('.modal-backdrop');
+      const modalClose = modal.querySelector('.modal-close');
+      const modalImage = modal.querySelector('[data-full-image]') as HTMLImageElement | null;
+      const lens = modal.querySelector('[data-lens]') as HTMLElement | null;
+      const magnifyHint = modal.querySelector('[data-magnify-hint]') as HTMLElement | null;
+      const desktopHint = modal.querySelector('[data-desktop-hint]') as HTMLElement | null;
+      const mobileHint = modal.querySelector('[data-mobile-hint]') as HTMLElement | null;
+      
+      let magnifyActive = false;
+      let zoomLevel = 2;
+      const minZoom = 1.5;
+      const maxZoom = 5;
+      let lensSize = 0;
+      
+      // Open modal
+      wrapper.addEventListener('click', () => {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Show appropriate hint based on device type
+        if (isTouchDevice) {
+          if (mobileHint) mobileHint.classList.remove('hidden');
+          if (desktopHint) desktopHint.classList.add('hidden');
+        } else {
+          if (desktopHint) desktopHint.classList.remove('hidden');
+          if (mobileHint) mobileHint.classList.add('hidden');
+          
+          // Calculate and set lens size to 50% of image dimensions
+          if (modalImage && lens) {
+            const rect = modalImage.getBoundingClientRect();
+            lensSize = Math.min(rect.width, rect.height) * 0.5;
+            lens.style.width = `${lensSize}px`;
+            lens.style.height = `${lensSize}px`;
+          }
+        }
+      });
+      
+      // Close modal
+      const closeModal = () => {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        magnifyActive = false;
+        if (lens) {
+          lens.classList.remove('active');
+          lens.style.display = 'none';
+        }
+        if (modalImage) modalImage.classList.remove('magnifying');
+        zoomLevel = 2;
+        if (magnifyHint) magnifyHint.classList.add('hidden');
+        if (desktopHint) desktopHint.classList.remove('hidden');
+        if (mobileHint) mobileHint.classList.add('hidden');
+      };
+      
+      modalBackdrop?.addEventListener('click', closeModal);
+      modalClose?.addEventListener('click', closeModal);
+      
+      // ESC key to close
+      const handleEsc = (e: KeyboardEvent) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+          closeModal();
+        }
+      };
+      document.addEventListener('keydown', handleEsc);
+      
+      // Only add magnifying glass functionality on non-touch devices
+      if (!isTouchDevice) {
+        // Activate magnifying glass on mousedown
+        modalImage?.addEventListener('mousedown', (e: MouseEvent) => {
+          e.preventDefault();
+          magnifyActive = true;
+          
+          if (lens && modalImage) {
+            // Show lens at cursor position immediately
+            const rect = modalImage.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            lens.style.left = `${x - lensSize / 2}px`;
+            lens.style.top = `${y - lensSize / 2}px`;
+            lens.style.display = 'block';
+            lens.classList.add('active');
+            
+            // Calculate and set initial background
+            const bgX = -(x * zoomLevel - lensSize / 2);
+            const bgY = -(y * zoomLevel - lensSize / 2);
+            lens.style.backgroundImage = `url('${modalImage.src}')`;
+            lens.style.backgroundSize = `${rect.width * zoomLevel}px ${rect.height * zoomLevel}px`;
+            lens.style.backgroundPosition = `${bgX}px ${bgY}px`;
+          }
+          
+          if (modalImage) modalImage.classList.add('magnifying');
+          if (magnifyHint) magnifyHint.classList.remove('hidden');
+          if (desktopHint) desktopHint.classList.add('hidden');
+        });
+        
+        // Deactivate magnifying glass on mouseup
+        const deactivateMagnify = () => {
+          magnifyActive = false;
+          if (lens) {
+            lens.classList.remove('active');
+            lens.style.display = 'none';
+          }
+          if (modalImage) modalImage.classList.remove('magnifying');
+          if (magnifyHint) magnifyHint.classList.add('hidden');
+          if (desktopHint) desktopHint.classList.remove('hidden');
+        };
+        
+        modalImage?.addEventListener('mouseup', deactivateMagnify);
+        modalImage?.addEventListener('mouseleave', deactivateMagnify);
+        document.addEventListener('mouseup', () => {
+          if (magnifyActive && modal.classList.contains('active')) {
+            deactivateMagnify();
+          }
+        });
+        
+        // Magnifying glass movement
+        modalImage?.addEventListener('mousemove', (e: MouseEvent) => {
+          if (!magnifyActive || !lens || !modalImage) return;
+          
+          const rect = modalImage.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          
+          // Position the lens
+          lens.style.left = `${x - lensSize / 2}px`;
+          lens.style.top = `${y - lensSize / 2}px`;
+          
+          // Calculate background position for zoom effect
+          const bgX = -(x * zoomLevel - lensSize / 2);
+          const bgY = -(y * zoomLevel - lensSize / 2);
+          
+          lens.style.backgroundImage = `url('${modalImage.src}')`;
+          lens.style.backgroundSize = `${rect.width * zoomLevel}px ${rect.height * zoomLevel}px`;
+          lens.style.backgroundPosition = `${bgX}px ${bgY}px`;
+        });
+        
+        // Scroll to zoom - zooms from center of lens
+        modalImage?.addEventListener('wheel', (e: WheelEvent) => {
+          if (!magnifyActive || !lens || !modalImage) return;
+          
+          e.preventDefault();
+          
+          const rect = modalImage.getBoundingClientRect();
+          
+          // Get current lens position
+          const lensLeft = parseFloat(lens.style.left) || 0;
+          const lensTop = parseFloat(lens.style.top) || 0;
+          
+          // Calculate center of lens relative to image
+          const lensCenterX = lensLeft + lensSize / 2;
+          const lensCenterY = lensTop + lensSize / 2;
+          
+          // Update zoom level
+          const delta = e.deltaY > 0 ? -0.2 : 0.2;
+          zoomLevel = Math.max(minZoom, Math.min(maxZoom, zoomLevel + delta));
+          
+          // Calculate new background position to keep center point stable
+          const bgX = -(lensCenterX * zoomLevel - lensSize / 2);
+          const bgY = -(lensCenterY * zoomLevel - lensSize / 2);
+          
+          lens.style.backgroundSize = `${rect.width * zoomLevel}px ${rect.height * zoomLevel}px`;
+          lens.style.backgroundPosition = `${bgX}px ${bgY}px`;
+        }, { passive: false });
+      }
+    });
+  }
+  
+  // Initialize image enhancements
+  enhanceBlogImages();
 </script>
 
