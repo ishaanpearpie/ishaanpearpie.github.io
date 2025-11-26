@@ -4,6 +4,7 @@ import BlogPostItem from '../../components/BlogPostItem.astro';
 import VimCursor from '../../components/VimCursor.astro';
 import { parseCustomDate, getWordCount } from '../../utils/date';
 import type { ImageMetadata } from 'astro';
+import { processExcalidrawImage, extractBannerFilename } from '../../utils/excalidraw';
 
 // Get all blog posts from the file system using import.meta.glob
 const allPosts = import.meta.glob('./**/index.md', { eager: true });
@@ -57,39 +58,20 @@ const posts = publishedPosts.map((post) => {
   let isExcalidrawBanner = false;
   
   if (frontmatter.banner) {
-    // Extract filename from Obsidian link format [[filename]]
-    let bannerFilename = frontmatter.banner;
-    if (frontmatter.banner.startsWith('[[') && frontmatter.banner.endsWith(']]')) {
-      bannerFilename = frontmatter.banner.slice(2, -2);
-    }
+    const bannerFilename = extractBannerFilename(frontmatter.banner);
 
     // Check if it's a URL (starts with http:// or https://)
     if (bannerFilename.startsWith('http://') || bannerFilename.startsWith('https://')) {
       bannerImage = bannerFilename;
     } else {
-      // Check if this is an Excalidraw image (ends with .excalidraw.dark or .excalidraw.light)
-      const excalidrawDarkMatch = bannerFilename.match(/^(.+\.excalidraw)\.dark(\.png)?$/);
-      const excalidrawLightMatch = bannerFilename.match(/^(.+\.excalidraw)\.light(\.png)?$/);
+      // Check if this is an Excalidraw image
+      const excalidrawResult = processExcalidrawImage(bannerFilename, images, slug);
       
-      if (excalidrawDarkMatch || excalidrawLightMatch) {
+      if (excalidrawResult.isExcalidraw) {
         isExcalidrawBanner = true;
-        // Load both variants for theme-aware display
-        const baseName = excalidrawDarkMatch ? excalidrawDarkMatch[1] : excalidrawLightMatch[1];
-        const lightPath = `./${slug}/_assets/excalidraw/${baseName}.light.png`;
-        const darkPath = `./${slug}/_assets/excalidraw/${baseName}.dark.png`;
-        
-        const lightImageModule = images[lightPath];
-        const darkImageModule = images[darkPath];
-        
-        if (lightImageModule) {
-          bannerLightImage = lightImageModule.default;
-        }
-        if (darkImageModule) {
-          bannerDarkImage = darkImageModule.default;
-        }
-        
-        // Use light as default fallback for cover
-        bannerImage = bannerLightImage;
+        bannerLightImage = excalidrawResult.lightImage;
+        bannerDarkImage = excalidrawResult.darkImage;
+        bannerImage = excalidrawResult.fallbackImage;
       } else {
         // Handle local Obsidian path (e.g., ./garrix.png or _assets/garrix.png)
         const bannerPath = bannerFilename.startsWith('./') 
@@ -244,8 +226,8 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
           <!-- Cursor-following hover card (desktop only) -->
           <div id="hover-card" class="fixed w-96 p-4 bg-[var(--bg-elevated)] border border-[var(--border-color)] rounded-lg shadow-2xl opacity-0 invisible transition-opacity duration-200 z-50 pointer-events-none hidden md:block" style="left: 0; top: 0;">
             <div id="hover-card-banner" class="mb-3 rounded-lg overflow-hidden border border-[var(--border-color)] hidden">
-              <img id="hover-card-image-light" src="" alt="" class="w-full h-40 object-cover hover-card-light" />
-              <img id="hover-card-image-dark" src="" alt="" class="w-full h-40 object-cover hover-card-dark" />
+              <img id="hover-card-image-light" src="" alt="" class="w-full object-contain hover-card-light" />
+              <img id="hover-card-image-dark" src="" alt="" class="w-full object-contain hover-card-dark" />
             </div>
             <p id="hover-card-description" class="text-sm text-[var(--text-secondary)] leading-relaxed"></p>
             <div id="hover-card-tags" class="flex flex-wrap gap-1 mt-3 pt-3 border-t border-[var(--border-color)]"></div>

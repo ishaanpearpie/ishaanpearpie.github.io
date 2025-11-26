@@ -89,22 +89,20 @@ export async function GET(context: APIContext) {
         if (bannerFilename.startsWith('http://') || bannerFilename.startsWith('https://')) {
           bannerUrl = bannerFilename;
         } else {
-          // Check if this is an Excalidraw image (ends with .excalidraw.dark or .excalidraw.light)
-          const excalidrawDarkMatch = bannerFilename.match(/^(.+\.excalidraw)\.dark(\.png)?$/);
-          const excalidrawLightMatch = bannerFilename.match(/^(.+\.excalidraw)\.light(\.png)?$/);
+          // Check if this is an Excalidraw image - use the exact variant specified
+          const isExcalidraw = bannerFilename.match(/\.excalidraw(?:\.(light|dark))?(?:\.png)?$/);
           
-          if (excalidrawDarkMatch || excalidrawLightMatch) {
-            // For RSS, use the light variant by default (better for most RSS readers)
-            const baseName = excalidrawDarkMatch ? excalidrawDarkMatch[1] : excalidrawLightMatch[1];
-            const lightPath = `./${post.slug}/_assets/excalidraw/${baseName}.light.png`;
+          if (isExcalidraw) {
+            // For excalidraw, look in the excalidraw subfolder
+            const imagePath = `./${post.slug}/_assets/excalidraw/${bannerFilename}`;
+            const imageModule = allImages[imagePath];
             
-            const imageModule = allImages[lightPath];
             if (imageModule) {
               const optimizedImage = await getImage({ src: imageModule.default, format: 'webp' });
               bannerUrl = `${siteUrl}${optimizedImage.src}`;
             } else {
               // Fallback to direct path if image not found
-              bannerUrl = `${siteUrl}/blog/${post.slug}/_assets/excalidraw/${baseName}.light.png`;
+              bannerUrl = `${siteUrl}/blog/${post.slug}/_assets/excalidraw/${bannerFilename}`;
             }
           } else {
             // Regular image handling

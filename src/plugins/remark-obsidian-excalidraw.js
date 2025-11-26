@@ -2,16 +2,17 @@ import { visit } from 'unist-util-visit';
 
 /**
  * Remark plugin to convert Obsidian-style Excalidraw wikilinks to theme-aware images
- * Converts: ![[drawing.excalidraw]] to a picture element with light/dark variants
- * Expects files: drawing.excalidraw.light.png and drawing.excalidraw.dark.png
+ * Converts: ![[drawing.excalidraw]], ![[drawing.excalidraw.light]], ![[drawing.excalidraw.dark]]
+ * to a container div with light/dark variants
+ * Expects files: drawing.excalidraw.light.png and drawing.excalidraw.dark.png in excalidraw folder
  */
 export function remarkObsidianExcalidraw() {
   return (tree) => {
     visit(tree, 'text', (node, index, parent) => {
       if (!node.value || typeof node.value !== 'string') return;
       
-      // Match Excalidraw wikilinks: ![[filename.excalidraw]]
-      const excalidrawRegex = /!\[\[([^\]]+\.excalidraw)\]\]/gi;
+      // Match Excalidraw wikilinks: ![[filename.excalidraw]], ![[filename.excalidraw.light]], etc.
+      const excalidrawRegex = /!\[\[([^\]]+\.excalidraw(?:\.(light|dark))?(?:\.png)?)\]\]/gi;
       
       if (excalidrawRegex.test(node.value)) {
         const segments = [];
@@ -32,8 +33,11 @@ export function remarkObsidianExcalidraw() {
             });
           }
           
-          // Generate paths for light and dark variants
-          const baseName = filename;
+          // Extract base name (e.g., "banner.excalidraw" from "banner.excalidraw.light.png")
+          const baseMatch = filename.match(/^(.+\.excalidraw)(?:\.(light|dark))?(?:\.png)?$/);
+          const baseName = baseMatch ? baseMatch[1] : filename;
+          
+          // Generate paths for light and dark variants in excalidraw folder
           const lightPath = `./_assets/excalidraw/${baseName}.light.png`;
           const darkPath = `./_assets/excalidraw/${baseName}.dark.png`;
           const altText = baseName.replace('.excalidraw', '');

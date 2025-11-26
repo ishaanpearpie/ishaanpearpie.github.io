@@ -1,5 +1,6 @@
 ---
 import { formatDateCompact, formatWordCount } from '../utils/date';
+import { getImage } from 'astro:assets';
 
 interface Props {
   title: string;
@@ -44,10 +45,28 @@ const isDraft = draft;
 const formattedDate = formatDateCompact(date);
 const wordCountFormatted = formatWordCount(wordCount);
 const wordCountColor = getWordCountColor(wordCount);
+
 // Extract banner URL - handle both string URLs and Astro Image objects
-const coverUrl = typeof cover === 'string' ? cover : (cover?.src || '');
-const coverLightUrl = coverLight?.src || '';
-const coverDarkUrl = coverDark?.src || '';
+let coverUrl = '';
+let coverLightUrl = '';
+let coverDarkUrl = '';
+
+if (typeof cover === 'string') {
+  coverUrl = cover;
+} else if (cover) {
+  const optimized = await getImage({ src: cover });
+  coverUrl = optimized.src;
+}
+
+if (coverLight) {
+  const optimized = await getImage({ src: coverLight });
+  coverLightUrl = optimized.src;
+}
+
+if (coverDark) {
+  const optimized = await getImage({ src: coverDark });
+  coverDarkUrl = optimized.src;
+}
 ---
 
 <div class="group relative blog-post-item" data-tags={JSON.stringify(tags)}>

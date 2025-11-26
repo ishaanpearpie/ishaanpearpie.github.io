@@ -6,6 +6,7 @@ import { personalInfo } from '../data/portfolio';
 import SocialButton from '../components/SocialButton.astro';
 import VimCursor from '../components/VimCursor.astro';
 import { formatDateLong, parseCustomDate, getWordCount, formatWordCount, calculateReadingTime, formatReadingTime } from '../utils/date';
+import { processExcalidrawImage, extractBannerFilename } from '../utils/excalidraw';
 
 const { frontmatter, headings, rawContent } = Astro.props;
 const { title, description, date, tags, banner } = frontmatter;
@@ -28,18 +29,13 @@ let bannerDarkImage: any = null;
 let isExcalidrawBanner = false;
 
 if (banner) {
-  // Extract filename from Obsidian link format [[filename]]
-  let bannerFilename = banner;
-  if (banner.startsWith('[[') && banner.endsWith(']]')) {
-    bannerFilename = banner.slice(2, -2);
-  }
+  const bannerFilename = extractBannerFilename(banner);
 
   // Check if it's a URL (starts with http:// or https://)
   if (bannerFilename.startsWith('http://') || bannerFilename.startsWith('https://')) {
     bannerImage = bannerFilename;
     bannerImageUrl = bannerFilename;
   } else {
-    // Handle local Obsidian path (e.g., ./garrix.png or _assets/garrix.png)
     // Get the current file path to determine the slug
     const url = Astro.url.pathname;
     const pathParts = url.split('/').filter(Boolean);
@@ -48,35 +44,19 @@ if (banner) {
     try {
       const images = import.meta.glob<{ default: ImageMetadata }>('/src/pages/blog/**/_assets/**/*.{png,jpg,jpeg,gif,webp,svg}', { eager: true });
       
-      // Check if this is an Excalidraw image (ends with .excalidraw.dark or .excalidraw.light)
-      const excalidrawDarkMatch = bannerFilename.match(/^(.+\.excalidraw)\.dark(\.png)?$/);
-      const excalidrawLightMatch = bannerFilename.match(/^(.+\.excalidraw)\.light(\.png)?$/);
+      // Check if this is an Excalidraw image
+      const excalidrawResult = processExcalidrawImage(bannerFilename, images, slug);
       
-      if (excalidrawDarkMatch || excalidrawLightMatch) {
+      if (excalidrawResult.isExcalidraw) {
         isExcalidrawBanner = true;
-        const baseName = excalidrawDarkMatch ? excalidrawDarkMatch[1] : excalidrawLightMatch![1];
+        bannerLightImage = excalidrawResult.lightImage;
+        bannerDarkImage = excalidrawResult.darkImage;
         
-        // Try to load both light and dark variants from excalidraw folder
-        const lightPath = `/src/pages/blog/${slug}/_assets/excalidraw/${baseName}.light.png`;
-        const darkPath = `/src/pages/blog/${slug}/_assets/excalidraw/${baseName}.dark.png`;
-        
-        const lightImageModule = images[lightPath];
-        const darkImageModule = images[darkPath];
-        
-        if (lightImageModule) {
-          bannerLightImage = lightImageModule.default;
-        }
-        if (darkImageModule) {
-          bannerDarkImage = darkImageModule.default;
-        }
-        
-        // Use the specified variant for the URL (for RSS/social media)
-        if (excalidrawDarkMatch && darkImageModule) {
-          bannerImage = darkImageModule.default;
-          bannerImageUrl = new URL(`/blog/${slug}/_assets/excalidraw/${baseName}.dark.png`, Astro.site).toString();
-        } else if (lightImageModule) {
-          bannerImage = lightImageModule.default;
-          bannerImageUrl = new URL(`/blog/${slug}/_assets/excalidraw/${baseName}.light.png`, Astro.site).toString();
+        // Use fallback for social media (prefers light variant)
+        bannerImage = excalidrawResult.fallbackImage;
+        if (bannerImage && excalidrawResult.baseName) {
+          const variant = bannerLightImage ? 'light' : 'dark';
+          bannerImageUrl = new URL(`/blog/${slug}/_assets/excalidraw/${excalidrawResult.baseName}.${variant}.png`, Astro.site).toString();
         }
       } else {
         // Regular image handling
