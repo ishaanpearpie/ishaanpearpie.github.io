@@ -850,7 +850,7 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
       const mobileHint = modal.querySelector('[data-mobile-hint]') as HTMLElement | null;
       
       let magnifyActive = false;
-      let zoomLevel = 2;
+      let zoomLevel = 3;
       const minZoom = 1.5;
       const maxZoom = 5;
       let lensSize = 0;
@@ -868,10 +868,9 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
           if (desktopHint) desktopHint.classList.remove('hidden');
           if (mobileHint) mobileHint.classList.add('hidden');
           
-          // Calculate and set lens size to 50% of image dimensions
-          if (modalImage && lens) {
-            const rect = modalImage.getBoundingClientRect();
-            lensSize = Math.min(rect.width, rect.height) * 0.5;
+          // Calculate and set lens size to 80% of viewport height
+          if (lens) {
+            lensSize = window.innerHeight * 0.8;
             lens.style.width = `${lensSize}px`;
             lens.style.height = `${lensSize}px`;
           }
@@ -888,7 +887,7 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
           lens.style.display = 'none';
         }
         if (modalImage) modalImage.classList.remove('magnifying');
-        zoomLevel = 2;
+        zoomLevel = 3;
         if (magnifyHint) magnifyHint.classList.add('hidden');
         if (desktopHint) desktopHint.classList.remove('hidden');
         if (mobileHint) mobileHint.classList.add('hidden');
