@@ -3,6 +3,9 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  /* Font families */
+  --font-family-mono: 'JetBrains Mono', 'Courier New', monospace;
+
   /* Cyber Aesthetic Color Palette - these create utilities like bg-cyber-blue, text-cyber-purple, etc. */
   --color-cyber-blue: oklch(0.7 0.25 250);
   --color-cyber-purple: oklch(0.65 0.28 290);
@@ -33,8 +36,8 @@
   
   /* Text colors */
   --color-text-primary-dark: oklch(0.95 0.01 270);
-  --color-text-secondary-dark: oklch(0.7 0.02 270);
-  --color-text-tertiary-dark: oklch(0.5 0.02 270);
+  --color-text-secondary-dark: oklch(0.82 0.015 270);
+  --color-text-tertiary-dark: oklch(0.65 0.02 270);
   
   --color-text-primary-light: oklch(0.2 0.01 270);
   --color-text-secondary-light: oklch(0.4 0.02 270);
@@ -52,7 +55,7 @@
   --animate-fade-in: fade-in 0.5s ease-out;
   --animate-slide-up: slide-up 0.5s ease-out;
   --animate-slide-down: slide-down 0.5s ease-out;
-  --animate-pulse-glow: pulse-glow 1.5s ease-in-out infinite;
+
   
   /* Define keyframes for custom animations */
   @keyframes gradient-shift {
@@ -101,15 +104,7 @@
       transform: translateY(0);
     }
   }
-  
-  @keyframes pulse-glow {
-    0%, 100% {
-      box-shadow: 0 0 5px oklch(0.7 0.25 250 / 0.5);
-    }
-    50% {
-      box-shadow: 0 0 20px oklch(0.7 0.25 250 / 0.8);
-    }
-  }
+
 }
 
 /* Root variables for theme switching - these are regular CSS variables, not theme variables */
@@ -144,32 +139,14 @@
     background-position: 0 0, 0 0;
   }
 
-  /* Glowing border effect */
+  /* Border effect - no glow */
   .glow-border {
     @apply relative border border-[var(--border-color)] transition-all duration-300;
   }
 
-  .glow-border::before {
-    content: '';
-    @apply absolute -inset-0.5 rounded-[inherit] p-0.5 opacity-0 transition-opacity duration-300;
-    background: linear-gradient(45deg, var(--color-cyber-blue), var(--color-cyber-purple), var(--color-cyber-pink));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-  }
-
-  .glow-border:hover::before {
-    @apply opacity-60;
-  }
-
-  /* Cyber text effect */
+  /* Terminal text - solid white for dark mode, black for light mode */
   .cyber-text {
-    background: linear-gradient(135deg, var(--color-cyber-cyan), var(--color-cyber-blue), var(--color-cyber-purple));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-size: 200% 200%;
-    @apply animate-gradient-shift;
+    color: var(--text-primary);
   }
 
   /* Terminal cursor animation */
@@ -213,18 +190,7 @@
     background-size: 100% 4px;
   }
 
-  /* Hover glow effect */
-  .hover-glow {
-    @apply transition-all duration-300;
-  }
 
-  .hover-glow:hover {
-    box-shadow: 
-      0 0 20px oklch(0.7 0.25 250 / 0.3),
-      0 0 40px oklch(0.65 0.28 290 / 0.2),
-      inset 0 0 20px oklch(0.75 0.18 195 / 0.1);
-  }
-  
   /* Color utility classes for Tailwind v4 */
   .bg-cyber-blue { background-color: var(--color-cyber-blue); }
   .bg-cyber-purple { background-color: var(--color-cyber-purple); }
@@ -279,24 +245,6 @@
   .theme-transitioning *::before,
   .theme-transitioning *::after {
     transition: none !important;
-  }
-
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    @apply w-2.5 h-2.5;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply rounded;
-    background: linear-gradient(180deg, var(--color-cyber-blue), var(--color-cyber-purple));
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, var(--color-cyber-cyan), var(--color-cyber-blue));
   }
 
   /* Selection color */

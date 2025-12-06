@@ -116,8 +116,8 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
         {tocHeadings.length > 0 && (
           <details class="lg:hidden mb-8 bg-[var(--bg-elevated)] border border-[var(--border-color)] rounded-xl overflow-hidden">
             <summary class="cursor-pointer px-6 py-4 font-bold text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors flex items-center justify-between group">
-              <span class="cyber-text flex items-center gap-2">
-                <svg class="w-5 h-5 text-cyber-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
                 </svg>
                 Table of Contents
@@ -158,7 +158,7 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
             )}
             
             {(bannerImage || isExcalidrawBanner) && (
-              <div class={isExcalidrawBanner ? "excalidraw-container my-8 -mx-4 sm:mx-0" : "my-8 -mx-4 sm:mx-0 rounded-none sm:rounded-2xl overflow-hidden border-0 sm:border border-[var(--border-color)] shadow-2xl shadow-cyber-purple/10"}>
+              <div class={isExcalidrawBanner ? "excalidraw-container my-8 -mx-4 sm:mx-0" : "my-8 -mx-4 sm:mx-0 rounded-none sm:rounded-2xl overflow-hidden border-0 sm:border border-[var(--border-color)]"}>
                 {isExcalidrawBanner ? (
                   <>
                     {bannerLightImage && (
@@ -283,7 +283,7 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
                       href="/blog/rss.xml"
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="group flex items-center gap-2 px-4 py-2 bg-[var(--bg-elevated)] border border-[var(--border-color)] rounded-lg hover:border-neon-orange transition-all hover-glow"
+                      class="group flex items-center gap-2 px-4 py-2 bg-[var(--bg-elevated)] border border-[var(--border-color)] rounded-lg hover:border-neon-orange transition-all"
                       aria-label="RSS Feed"
                     >
                       <svg class="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 24 24" style="color: var(--color-neon-orange);">
@@ -312,7 +312,7 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
         <aside class="hidden lg:block lg:w-64 xl:w-72 flex-shrink-0">
           <div class="sticky top-8">
             <div class="bg-[var(--bg-elevated)] backdrop-blur-sm border border-[var(--border-color)] rounded-2xl p-6 shadow-xl">
-              <h2 class="text-lg font-bold mb-4 cyber-text">
+              <h2 class="text-lg font-bold mb-4 text-[var(--text-primary)]">
                 Table of Contents
               </h2>
               <nav class="toc-nav">
@@ -376,10 +376,6 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
     margin-top: 3rem;
     margin-bottom: 1.5rem;
     line-height: 1.3;
-    background: linear-gradient(to right, var(--color-cyber-blue), var(--color-cyber-purple));
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     scroll-margin-top: 2rem;
   }
   
@@ -391,7 +387,6 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
   .blog-content p {
     margin-bottom: 1.5rem;
     line-height: 1.8;
-    color: var(--text-secondary);
   }
   
   .blog-content a {
@@ -460,7 +455,7 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
     font-size: 0.9em;
     color: var(--color-terminal-yellow);
     border: 1px solid var(--border-color);
-    font-family: 'Courier New', monospace;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
   }
   
   .blog-content pre {
@@ -543,7 +538,6 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
     border-radius: 1rem;
     overflow: hidden;
     border: 1px solid var(--border-color);
-    box-shadow: 0 20px 50px rgba(156, 89, 255, 0.2);
   }
 
   .excalidraw-container img {
