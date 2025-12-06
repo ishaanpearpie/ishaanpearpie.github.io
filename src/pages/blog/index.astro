@@ -238,7 +238,7 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
   </div>
 </Layout>
 
-<style>
+<style is:global>
   /* Terminal listing styles */
   a:hover .text-terminal-blue,
   a:hover .text-terminal-green,
@@ -256,11 +256,11 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
     display: none;
   }
   
-  :global(.dark) .hover-card-light {
+  .dark .hover-card-light {
     display: none;
   }
   
-  :global(.dark) .hover-card-dark {
+  .dark .hover-card-dark {
     display: block;
   }
 
@@ -279,32 +279,6 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
   /* Terminal cursor blink */
   .terminal-cursor {
     animation: blink 1s step-end infinite;
-  }
-
-  @keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
-  }
-
-  /* Fade in animations */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes instantShow {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
   }
 
   .ls-output.animate-in {

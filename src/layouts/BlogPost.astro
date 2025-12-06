@@ -102,8 +102,8 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
           <p class="text-sm font-mono text-[var(--text-tertiary)] mb-4">
             <span class="text-terminal-green">milind@blog</span>:<span class="text-terminal-blue">~/posts</span>$ cat {title.toLowerCase().replace(/\s+/g, '-')}.md
           </p>
-          <a href="/blog" class="group inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-cyber-purple transition-colors">
-            <div class="p-2 rounded-lg bg-[var(--bg-elevated)] group-hover:bg-cyber-purple/10 transition-colors border border-[var(--border-color)]">
+          <a href="/blog" class="group inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+            <div class="p-2 rounded-lg bg-[var(--bg-elevated)] group-hover:bg-[var(--bg-secondary)] transition-colors border border-[var(--border-color)]">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
               </svg>
@@ -132,7 +132,7 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
                   <li style={`margin-left: ${(heading.depth - 2) * 1}rem`}>
                     <a 
                       href={`#${heading.slug}`}
-                      class="mobile-toc-link block py-2 px-3 text-[var(--text-secondary)] hover:text-cyber-purple hover:bg-cyber-purple/10 rounded transition-all text-sm border-l-2 border-transparent hover:border-cyber-purple"
+                      class="mobile-toc-link block py-2 px-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] rounded transition-all text-sm border-l-2 border-transparent hover:border-[var(--text-primary)]"
                       data-heading-id={heading.slug}
                     >
                       {heading.text}
@@ -701,17 +701,6 @@ const tocHeadings = headings?.filter((h: any) => h.depth >= 2 && h.depth <= 3) |
 
   .blog-image-modal .hidden {
     display: none !important;
-  }
-
-  @keyframes fadeInDown {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
   }
 
   .blog-image-wrapper {

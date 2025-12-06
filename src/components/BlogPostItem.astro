@@ -152,14 +152,3 @@ if (coverDark) {
     </div>
   </a>
 </div>
-
-<style>
-  /* Filter icons to be white in dark mode, black in light mode */
-  :global(.dark) .blog-icon {
-    filter: brightness(0) saturate(100%) invert(100%);
-  }
-  
-  :global(:root:not(.dark)) .blog-icon {
-    filter: brightness(0) saturate(100%) invert(0%);
-  }
-</style>

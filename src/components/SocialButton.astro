@@ -64,17 +64,16 @@ const textSizes = {
   href={url}
   target="_blank"
   rel="noopener noreferrer"
-  class={`group ${sizeClasses[size]} rounded-lg border border-[var(--border-color)] bg-[var(--bg-elevated)] transition-all duration-300 social-button`}
-  style={`--button-color: var(${colorVar})`}
+  class={`group ${sizeClasses[size]} rounded-lg border border-[var(--border-color)] bg-[var(--bg-elevated)] transition-all duration-300 hover:border-[var(${colorVar})]`}
   aria-label={name}
 >
   <div class="flex items-center gap-2 sm:gap-3">
     <div 
-      class={`${iconSizes[size]} transition-all flex-shrink-0 social-icon`}
-      style={`-webkit-mask-image: url('${iconSrc}'); mask-image: url('${iconSrc}');`}
+      class={`${iconSizes[size]} transition-all flex-shrink-0 bg-[var(--text-secondary)] group-hover:bg-[var(${colorVar})]`}
+      style={`-webkit-mask-image: url('${iconSrc}'); mask-image: url('${iconSrc}'); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; transition: background-color 0.3s ease-in-out;`}
       aria-hidden="true"
     ></div>
-    <span class={`${textSizes[size]} font-medium text-[var(--text-secondary)] transition-colors social-text whitespace-nowrap`}>
+    <span class={`${textSizes[size]} font-medium text-[var(--text-secondary)] group-hover:text-[var(${colorVar})] transition-colors whitespace-nowrap`}>
       {name}
     </span>
     {description && (
@@ -82,28 +81,3 @@ const textSizes = {
     )}
   </div>
 </a>
-
-<style>
-  .social-button:hover {
-    border-color: var(--button-color);
-  }
-  
-  .social-icon {
-    background-color: var(--text-secondary);
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    transition: background-color 0.3s ease-in-out;
-  }
-  
-  .social-button:hover .social-icon {
-    background-color: var(--button-color);
-  }
-  
-  .social-button:hover .social-text {
-    color: var(--button-color);
-  }
-</style>

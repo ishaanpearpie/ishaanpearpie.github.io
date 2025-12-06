@@ -227,6 +227,52 @@
   .border-terminal-yellow { border-color: var(--color-terminal-yellow); }
   .border-terminal-red { border-color: var(--color-terminal-red); }
   .border-terminal-blue { border-color: var(--color-terminal-blue); }
+
+  /* Filter icons to be white in dark mode, black in light mode */
+  .dark .blog-icon {
+    filter: brightness(0) saturate(100%) invert(100%);
+  }
+  
+  :root:not(.dark) .blog-icon {
+    filter: brightness(0) saturate(100%) invert(0%);
+  }
+
+  /* Terminal cursor blink animation */
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes instantShow {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
 @layer base {
