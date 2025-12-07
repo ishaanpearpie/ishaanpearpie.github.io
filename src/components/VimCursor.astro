@@ -1,6 +1,20 @@
----
-// Vim-style blinking cursor component
-// Used throughout the site for that terminal/neovim aesthetic
----
+<span class="vim-cursor">|</span>
 
-<span class="vim-cursor"></span>
+<style>
+    .vim-cursor {
+        display: inline-block;
+        animation: blink 1s step-end infinite;
+        color: var(--ctp-text);
+    }
+
+    @keyframes blink {
+        0%,
+        50% {
+            opacity: 1;
+        }
+        50.1%,
+        100% {
+            opacity: 0;
+        }
+    }
+</style>
