@@ -28,3 +28,6 @@ src/pages/blog/*/
 
 # Blog sync temporary directory
 blog-content-temp/
+
+ascii.txt
+ideas.md

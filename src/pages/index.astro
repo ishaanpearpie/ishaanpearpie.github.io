@@ -14,7 +14,7 @@ const githubStats = await fetchGithubStats();
 <Layout title="portfolio@milind.dev" includePadding={true}>
 	<div
 		id="terminal-container"
-		class="font-mono text-xs sm:text-sm md:text-base leading-tight z-10 min-h-[100vh]"
+		class="font-mono text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl leading-tight z-10 min-h-[100vh] lg:min-h-0 lg:h-[calc(100vh-4rem)] lg:overflow-hidden"
 	>
 		<div class="mb-4">
 			<TerminalPrompt
@@ -33,7 +33,7 @@ const githubStats = await fetchGithubStats();
 				class="flex flex-col lg:flex-row gap-10 items-center lg:items-start w-fit"
 			>
 				<div class="select-none text-ctp-blue font-bold">
-          <pre>
+					<pre>
   ,=====================.
   |MILIND'S  LAB  /6000/|
   |.-------------------.|
@@ -196,14 +196,14 @@ const githubStats = await fetchGithubStats();
 						--------------------------
 					</div>
 					<div class="mt-2 flex gap-3 select-none">
-						<span class="w-3 h-3 rounded-full bg-ctp-black"></span>
-						<span class="w-3 h-3 rounded-full bg-ctp-red"></span>
-						<span class="w-3 h-3 rounded-full bg-ctp-green"></span>
-						<span class="w-3 h-3 rounded-full bg-ctp-yellow"></span>
-						<span class="w-3 h-3 rounded-full bg-ctp-blue"></span>
-						<span class="w-3 h-3 rounded-full bg-ctp-mauve"></span>
-						<span class="w-3 h-3 rounded-full bg-ctp-teal"></span>
-						<span class="w-3 h-3 rounded-full bg-ctp-text"></span>
+						<i class="nf nf-fa-circle text-ctp-black"></i>
+						<i class="nf nf-fa-circle text-ctp-red"></i>
+						<i class="nf nf-fa-circle text-ctp-green"></i>
+						<i class="nf nf-fa-circle text-ctp-yellow"></i>
+						<i class="nf nf-fa-circle text-ctp-blue"></i>
+						<i class="nf nf-fa-circle text-ctp-mauve"></i>
+						<i class="nf nf-fa-circle text-ctp-teal"></i>
+						<i class="nf nf-fa-circle text-ctp-text"></i>
 					</div>
 				</div>
 			</div>
