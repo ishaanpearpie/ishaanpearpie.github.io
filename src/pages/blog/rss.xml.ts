@@ -72,6 +72,30 @@ export async function GET(context: APIContext) {
 
         // Replace href="/" with href="https://milind.dev/"
         content = content.replace(/href="(\/[^"]+)"/g, `href="${siteUrl}$1"`);
+
+        // Fix Excalidraw theme-aware images for RSS
+        // format: <div class="..."> <img ... class="excalidraw-light"> <img ... class="excalidraw-dark"> </div>
+        // or the old format with tailwind classes
+        // We want to keep only the dark variant and remove the container
+
+        // This regex looks for the container and captures the dark image content
+        // It's a bit complex because we need to handle the structure created by the remark plugin
+        // Relaxed regex to handle varying container attributes (like excalidraw-container or extra classes)
+        const containerRegex = /<div[^>]*>\s*<img[^>]*class="[^"]*excalidraw-light[^"]*"[^>]*>\s*(<img[^>]*class="[^"]*excalidraw-dark[^"]*"[^>]*>)\s*<\/div>/g;
+
+        content = content.replace(containerRegex, (match, darkImage) => {
+          // Extract src and alt from the dark image
+          const srcMatch = darkImage.match(/src="([^"]+)"/);
+          const altMatch = darkImage.match(/alt="([^"]+)"/);
+
+          if (srcMatch) {
+            const src = srcMatch[1];
+            const alt = altMatch ? altMatch[1] : 'Excalidraw Image';
+            // Return a simple clean image tag
+            return `<img src="${src}" alt="${alt}" style="display: block; width: 100%; height: auto;" />`;
+          }
+          return match; // fallback if parsing fails
+        });
       }
 
       // Prepend banner to content if banner exists
@@ -93,16 +117,38 @@ export async function GET(context: APIContext) {
           const isExcalidraw = bannerFilename.match(/\.excalidraw(?:\.(light|dark))?(?:\.png)?$/);
 
           if (isExcalidraw) {
-            // For excalidraw, look in the excalidraw subfolder
-            const imagePath = `./${post.slug}/_assets/excalidraw/${bannerFilename}`;
-            const imageModule = allImages[imagePath];
+            // For excalidraw, prefer the dark variant for RSS feed
+            // Construct filename with .dark suffix if it doesn't have one
+            let darkFilename = bannerFilename;
+            if (!bannerFilename.includes('.dark') && !bannerFilename.includes('.light')) {
+              // If it's just filename.excalidraw, append .dark
+              darkFilename = `${bannerFilename}.dark.png`;
+            } else if (bannerFilename.includes('.light')) {
+              // If it's explicitly light, switch to dark
+              darkFilename = bannerFilename.replace('.light', '.dark');
+            }
+
+            // Clean up double extension if present (e.g., .excalidraw.dark.png.png)
+            if (!darkFilename.endsWith('.png')) {
+              darkFilename = `${darkFilename}.png`;
+            }
+
+            // Look for the dark image
+            const imagePath = `./${post.slug}/_assets/excalidraw/${darkFilename}`;
+            let imageModule = allImages[imagePath];
+
+            // Fallback to original filename if dark variant not found
+            if (!imageModule) {
+              const originalPath = `./${post.slug}/_assets/excalidraw/${bannerFilename}`;
+              imageModule = allImages[originalPath];
+            }
 
             if (imageModule) {
               const optimizedImage = await getImage({ src: imageModule.default, format: 'webp' });
               bannerUrl = `${siteUrl}${optimizedImage.src}`;
             } else {
               // Fallback to direct path if image not found
-              bannerUrl = `${siteUrl}/blog/${post.slug}/_assets/excalidraw/${bannerFilename}`;
+              bannerUrl = `${siteUrl}/blog/${post.slug}/_assets/excalidraw/${darkFilename}`;
             }
           } else {
             // Regular image handling

@@ -128,7 +128,12 @@ const prevPost =
   currentPostIndex < posts.length - 1 ? posts[currentPostIndex + 1] : null; // Older post
 ---
 
-<Layout title={title} description={blogDescription} image={socialImage}>
+<Layout
+  title={title}
+  description={blogDescription}
+  image={socialImage}
+  bodyClass="!overflow-visible !h-auto scroll-smooth"
+>
   <div
     class="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] relative"
   >
@@ -137,7 +142,7 @@ const prevPost =
     </div>
 
     <div
-      class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-16 lg:flex lg:gap-12 lg:items-start relative z-10"
+      class="max-w-7xl mx-auto px-2 sm:px-6 py-8 sm:py-16 lg:flex lg:gap-12 lg:items-start relative z-10 overflow-x-hidden"
     >
       <!-- Main content -->
       <div class="flex-1 w-full min-w-0 max-w-none lg:max-w-[calc(100%-20rem)]">
@@ -253,8 +258,8 @@ const prevPost =
                 <div
                   class={
                     isExcalidrawBanner
-                      ? "excalidraw-container my-8 -mx-4 sm:mx-0"
-                      : "my-8 -mx-4 sm:mx-0 rounded-none sm:rounded-2xl overflow-hidden border-0 sm:border border-[var(--border-color)]"
+                      ? "relative my-12 -mx-2 sm:mx-0 rounded-2xl overflow-hidden"
+                      : "my-8 -mx-2 sm:mx-0 rounded-none sm:rounded-2xl overflow-hidden"
                   }
                 >
                   {isExcalidrawBanner ? (
@@ -265,7 +270,7 @@ const prevPost =
                           alt={title}
                           width={1200}
                           height={675}
-                          class="excalidraw-light"
+                          class="hidden [.latte_&]:block w-full h-auto m-0! border-none! rounded-none! shadow-none!"
                           loading="eager"
                         />
                       )}
@@ -275,7 +280,7 @@ const prevPost =
                           alt={title}
                           width={1200}
                           height={675}
-                          class="excalidraw-dark"
+                          class="block [.latte_&]:hidden w-full h-auto m-0! border-none! rounded-none! shadow-none!"
                           loading="eager"
                         />
                       )}
@@ -301,14 +306,14 @@ const prevPost =
               )
             }
 
-            <div class="flex flex-wrap items-center gap-4 text-sm">
+            <div class="flex flex-wrap items-center gap-6 text-sm mb-8">
               {
                 formattedDate && (
-                  <div class="flex items-center gap-2 text-[var(--text-secondary)]">
-                    <i class="nf nf-fa-calendar_alt w-5 h-5" />
+                  <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border-color)]">
+                    <i class="nf nf-md-calendar_month w-4 h-4 text-[var(--color-cyber-purple)]" />
                     <time
                       datetime={date}
-                      class="font-bold text-[var(--text-primary)] text-base"
+                      class="font-mono font-medium text-[var(--text-primary)]"
                     >
                       {formattedDate}
                     </time>
@@ -318,9 +323,9 @@ const prevPost =
 
               {
                 wordCount > 0 && (
-                  <div class="flex items-center gap-2 text-[var(--text-secondary)]">
-                    <i class="nf nf-fa-file_alt w-5 h-5" />
-                    <span class="font-bold text-[var(--text-primary)] text-base">
+                  <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border-color)]">
+                    <i class="nf nf-md-file_document_outline w-4 h-4 text-[var(--color-terminal-green)]" />
+                    <span class="font-mono font-medium text-[var(--text-primary)]">
                       {wordCount} words
                     </span>
                   </div>
@@ -329,9 +334,9 @@ const prevPost =
 
               {
                 readingTime > 0 && (
-                  <div class="flex items-center gap-2 text-[var(--text-secondary)]">
-                    <i class="nf nf-fa-clock w-5 h-5" />
-                    <span class="font-bold text-[var(--text-primary)] text-base">
+                  <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border-color)]">
+                    <i class="nf nf-md-clock_outline w-4 h-4 text-[var(--color-terminal-yellow)]" />
+                    <span class="font-mono font-medium text-[var(--text-primary)]">
                       {readingTimeFormatted}
                     </span>
                   </div>
@@ -353,13 +358,39 @@ const prevPost =
           </header>
 
           <!-- Article content with enhanced styling -->
-          <div class="blog-content">
+          <div
+            class="blog-content w-full break-words overflow-hidden text-base md:text-lg leading-relaxed text-[var(--text-primary)]
+            [&_:is(h1,h2,h3,h4,h5,h6)]:text-[var(--text-primary)] [&_:is(h1,h2,h3,h4,h5,h6)]:font-bold [&_:is(h1,h2,h3,h4,h5,h6)]:mt-12 [&_:is(h1,h2,h3,h4,h5,h6)]:mb-6 [&_:is(h1,h2,h3,h4,h5,h6)]:leading-tight [&_:is(h1,h2,h3,h4,h5,h6)]:scroll-mt-8
+            [&_h1]:text-4xl
+            [&_h2]:text-3xl
+            [&_h3]:text-2xl
+            [&_h4]:text-xl
+            [&_p]:mb-6 [&_p]:leading-relaxed
+            [&_a]:text-[var(--color-cyber-purple)] [&_a]:underline [&_a]:decoration-[var(--color-cyber-purple)] [&_a]:underline-offset-4 [&_a]:transition-all
+            [&_a:hover]:text-[var(--color-cyber-cyan)] [&_a:hover]:decoration-[var(--color-cyber-cyan)]
+            [&_img]:rounded-xl [&_img]:my-10 [&_img]:w-full [&_img]:h-auto [&_img]:shadow-lg
+            [&_:is(ul,ol)]:mb-6 [&_:is(ul,ol)]:pl-8
+            [&_li]:mb-3 [&_li]:pl-2 [&_li]:text-[var(--text-secondary)]
+            [&_ul_li]:list-none [&_ul_li]:relative [&_ul_li]:before:content-['▹'] [&_ul_li]:before:absolute [&_ul_li]:before:-left-6 [&_ul_li]:before:text-[var(--color-terminal-green)] [&_ul_li]:before:font-bold
+            [&_ol_li]:list-decimal [&_ol_li]:list-outside [&_ol_li]:marker:text-[var(--color-cyber-purple)] [&_ol_li]:marker:font-bold
+            [&_code]:bg-[var(--bg-elevated)] [&_code]:px-2 [&_code]:py-1 [&_code]:rounded-md [&_code]:text-[0.9em] [&_code]:text-[var(--color-terminal-yellow)] [&_code]:font-mono
+            [&_pre]:bg-[var(--bg-elevated)] [&_pre]:p-6 [&_pre]:rounded-2xl [&_pre]:overflow-x-auto [&_pre]:my-8 [&_pre]:border [&_pre]:border-[var(--border-color)] [&_pre]:shadow-2xl
+            [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:border-none [&_pre_code]:text-[var(--text-primary)] [&_pre_code]:shadow-none
+            [&_blockquote]:border-l-4 [&_blockquote]:border-[var(--color-cyber-purple)] [&_blockquote]:pl-6 [&_blockquote]:py-2 [&_blockquote]:italic [&_blockquote]:text-[var(--text-secondary)] [&_blockquote]:my-8 [&_blockquote]:bg-[var(--bg-elevated)] [&_blockquote]:rounded-r-lg
+            [&_table]:w-full [&_table]:border-collapse [&_table]:my-8 [&_table]:rounded-lg [&_table]:overflow-hidden [&_table]:border [&_table]:border-[var(--border-color)]
+            [&_:is(th,td)]:border [&_:is(th,td)]:border-[var(--border-color)] [&_:is(th,td)]:p-3 [&_:is(th,td)]:text-left
+            [&_th]:bg-[var(--bg-elevated)] [&_th]:font-bold [&_th]:text-[var(--color-cyber-purple)]
+            [&_tr:nth-child(even)]:bg-[var(--bg-elevated)]
+            [&_hr]:border-none [&_hr]:h-px [&_hr]:bg-gradient-to-r [&_hr]:from-transparent [&_hr]:via-[var(--border-color)] [&_hr]:to-transparent [&_hr]:my-12
+            [&_strong]:text-[var(--text-primary)] [&_strong]:font-bold
+            [&_em]:text-[var(--text-secondary)]"
+          >
             <slot />
           </div>
 
           <!-- Back to blog footer -->
-          <footer class="mt-16 pt-8 border-t border-[var(--border-color)]">
-            <div class="mb-12">
+          <footer class="mt-8 pt-8 border-t border-[var(--border-color)]">
+            <div class="mb-4">
               <p class="text-sm font-mono text-[var(--text-tertiary)] mb-4">
                 <span class="text-terminal-green">milind@blog</span>:<span
                   class="text-terminal-blue">~/posts</span
@@ -386,7 +417,7 @@ const prevPost =
             </div>
 
             <!-- Social Links & RSS -->
-            <div class="mt-8 pt-8 border-t border-[var(--border-color)]">
+            <div class="mt-4 pt-4">
               <div class="flex flex-col gap-6">
                 <div>
                   <h3
@@ -401,7 +432,7 @@ const prevPost =
 
                 {
                   (nextPost || prevPost) && (
-                    <div class="mt-8 pt-8 border-t border-[var(--border-color)] grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="mt-4 pt-4  grid grid-cols-1 sm:grid-cols-2 gap-6">
                       {prevPost ? (
                         <a
                           href={prevPost.url}
@@ -485,393 +516,6 @@ const prevPost =
   </div>
 </Layout>
 
-<style is:global>
-  /* Override base layout styles for blog posts */
-  html,
-  body {
-    overflow: visible !important;
-    height: auto !important;
-    scroll-behavior: smooth;
-  }
-
-  /* Blog content styles with enhanced typography */
-  .blog-content {
-    color: var(--text-primary);
-    font-size: 1.125rem;
-    line-height: 1.8;
-  }
-
-  .blog-content :is(h1, h2, h3, h4, h5, h6) {
-    color: var(--text-primary);
-    font-weight: 700;
-    margin-top: 3rem;
-    margin-bottom: 1.5rem;
-    line-height: 1.3;
-    scroll-margin-top: 2rem;
-  }
-
-  .blog-content h1 {
-    font-size: 2.25rem;
-  }
-  .blog-content h2 {
-    font-size: 1.875rem;
-  }
-  .blog-content h3 {
-    font-size: 1.5rem;
-  }
-  .blog-content h4 {
-    font-size: 1.25rem;
-  }
-
-  .blog-content p {
-    margin-bottom: 1.5rem;
-    line-height: 1.8;
-  }
-
-  .blog-content a {
-    color: var(--color-cyber-purple);
-    text-decoration: underline;
-    text-decoration-color: var(--color-cyber-purple);
-    text-underline-offset: 3px;
-    transition: all 0.2s;
-  }
-
-  .blog-content a:hover {
-    color: var(--color-cyber-cyan);
-    text-decoration-color: var(--color-cyber-cyan);
-  }
-
-  .blog-content img {
-    border-radius: 0.75rem;
-    margin-top: 2.5rem;
-    margin-bottom: 2.5rem;
-    width: 100%;
-    height: auto;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  .blog-content :is(ul, ol) {
-    margin-bottom: 1.5rem;
-    padding-left: 2rem;
-  }
-
-  .blog-content li {
-    margin-bottom: 0.75rem;
-    padding-left: 0.5rem;
-    color: var(--text-secondary);
-  }
-
-  .blog-content ul li {
-    list-style-type: none;
-    position: relative;
-  }
-
-  .blog-content ul li::before {
-    content: "▹";
-    position: absolute;
-    left: -1.5rem;
-    color: var(--color-terminal-green);
-    font-weight: bold;
-  }
-
-  .blog-content ol li {
-    list-style-type: decimal;
-    list-style-position: outside;
-  }
-
-  .blog-content ol li::marker {
-    color: var(--color-cyber-purple);
-    font-weight: bold;
-  }
-
-  .blog-content code {
-    background: var(--bg-elevated);
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.375rem;
-    font-size: 0.9em;
-    color: var(--color-terminal-yellow);
-    border: 1px solid var(--border-color);
-    font-family: "JetBrains Mono", "Courier New", monospace;
-  }
-
-  .blog-content pre {
-    background: var(--bg-elevated);
-    padding: 1.5rem;
-    border-radius: 1rem;
-    overflow-x: auto;
-    margin: 2rem 0;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  }
-
-  .blog-content pre code {
-    background: transparent;
-    padding: 0;
-    border: none;
-    color: var(--text-primary);
-    box-shadow: none;
-  }
-
-  .blog-content blockquote {
-    border-left: 4px solid var(--color-cyber-purple);
-    padding-left: 1.5rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    font-style: italic;
-    color: var(--text-secondary);
-    margin: 2rem 0;
-    background: var(--bg-elevated);
-    border-radius: 0 0.5rem 0.5rem 0;
-  }
-
-  .blog-content table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 2rem 0;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
-  }
-
-  .blog-content :is(th, td) {
-    border: 1px solid var(--border-color);
-    padding: 0.75rem 1rem;
-    text-align: left;
-  }
-
-  .blog-content th {
-    background: var(--bg-elevated);
-    font-weight: 700;
-    color: var(--color-cyber-purple);
-  }
-
-  .blog-content tr:nth-child(even) {
-    background: var(--bg-elevated);
-  }
-
-  .blog-content hr {
-    border: none;
-    height: 1px;
-    background: linear-gradient(
-      to right,
-      transparent,
-      var(--border-color),
-      transparent
-    );
-    margin: 3rem 0;
-  }
-
-  .blog-content strong {
-    color: var(--text-primary);
-    font-weight: 700;
-  }
-
-  .blog-content em {
-    color: var(--text-secondary);
-  }
-
-  /* Excalidraw theme-aware image container */
-  .excalidraw-container {
-    position: relative;
-    margin-top: 3rem;
-    margin-bottom: 3rem;
-    border-radius: 1rem;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
-  }
-
-  .excalidraw-container img {
-    width: 100%;
-    height: auto;
-    margin: 0 !important;
-    border: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-  }
-
-  /* Default theme is mocha (dark) - show dark images */
-  .excalidraw-container .excalidraw-light {
-    display: none !important;
-  }
-
-  .excalidraw-container .excalidraw-dark {
-    display: block !important;
-  }
-
-  /* When latte theme is active - show light images */
-  .latte .excalidraw-container .excalidraw-light {
-    display: block !important;
-  }
-
-  .latte .excalidraw-container .excalidraw-dark {
-    display: none !important;
-  }
-
-  /* TOC Active Link Styles */
-  .toc-link.active {
-    color: var(--color-cyber-purple);
-    background: oklch(0.65 0.28 290 / 0.15);
-    border-left-color: var(--color-cyber-purple);
-  }
-
-  /* Blog Image Modal Styles */
-  .blog-image-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .blog-image-modal.active {
-    display: flex;
-    opacity: 1;
-  }
-
-  .blog-image-modal .modal-backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.9);
-  }
-
-  .blog-image-modal .modal-content {
-    position: relative;
-    width: 95vw;
-    height: 95vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1;
-  }
-
-  .blog-image-modal .modal-close {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 0.5rem;
-    padding: 0.75rem;
-    color: white;
-    cursor: pointer;
-    z-index: 10;
-    transition: all 0.2s ease;
-    backdrop-filter: blur(10px);
-  }
-
-  .blog-image-modal .modal-close:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
-  }
-
-  .blog-image-modal .modal-image-container {
-    position: relative;
-    max-width: 90%;
-    max-height: 90%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .blog-image-modal .modal-image {
-    max-width: 100%;
-    max-height: 85vh;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    border-radius: 0.5rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-  }
-
-  .blog-image-modal .modal-image.magnifying {
-    cursor: none;
-  }
-
-  .blog-image-modal .magnify-lens {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    border: 3px solid white;
-    border-radius: 50%;
-    pointer-events: none;
-    display: none;
-    background-repeat: no-repeat;
-    box-shadow:
-      0 0 20px rgba(0, 0, 0, 0.5),
-      inset 0 0 20px rgba(255, 255, 255, 0.2);
-    z-index: 100;
-    overflow: hidden;
-  }
-
-  .blog-image-modal .magnify-lens.active {
-    display: block;
-  }
-
-  .blog-image-modal .modal-instructions {
-    position: absolute;
-    top: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: center;
-    z-index: 10;
-    padding-bottom: 1rem;
-  }
-
-  .blog-image-modal .instruction-badge {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 2rem;
-    padding: 0.5rem 1.25rem;
-    color: white;
-    font-size: 0.875rem;
-    font-weight: 500;
-    backdrop-filter: blur(10px);
-    animation: fadeInDown 0.3s ease;
-  }
-
-  .blog-image-modal .hidden {
-    display: none !important;
-  }
-
-  .blog-image-wrapper {
-    transition: all 0.3s ease;
-  }
-
-  .blog-image-wrapper:hover img {
-    transform: translateY(-2px);
-  }
-
-  @media (max-width: 640px) {
-    .blog-image-modal .modal-image-container {
-      max-width: 95%;
-    }
-
-    .blog-image-modal .instruction-badge {
-      font-size: 0.75rem;
-      padding: 0.375rem 1rem;
-    }
-  }
-
-  @keyframes fadeInDown {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-</style>
-
 <script>
   // Auto-close mobile TOC details when clicking a link
   const mobileTocDetails = document.querySelector("details.lg\\:hidden");
@@ -901,7 +545,15 @@ const prevPost =
       if (entry.isIntersecting) {
         const id = entry.target.id;
         // Remove active class from all links
-        tocLinks.forEach((link) => link.classList.remove("active"));
+        tocLinks.forEach((link) => {
+          link.classList.remove("active");
+          // Remove Tailwind classes for active state if they were applied directly
+          link.classList.remove(
+            "text-[var(--color-cyber-purple)]",
+            "bg-[oklch(0.65_0.28_290_/_0.15)]",
+            "border-l-[var(--color-cyber-purple)]",
+          );
+        });
         // Add active class to current link (both desktop and mobile)
         const activeLinkDesktop = document.querySelector(
           `.toc-link[data-heading-id="${id}"]`,
@@ -909,11 +561,20 @@ const prevPost =
         const activeLinkMobile = document.querySelector(
           `.mobile-toc-link[data-heading-id="${id}"]`,
         );
+
+        const activeClasses = [
+          "text-[var(--color-cyber-purple)]",
+          "bg-[oklch(0.65_0.28_290_/_0.15)]",
+          "border-l-[var(--color-cyber-purple)]",
+        ];
+
         if (activeLinkDesktop) {
           activeLinkDesktop.classList.add("active");
+          activeLinkDesktop.classList.add(...activeClasses);
         }
         if (activeLinkMobile) {
           activeLinkMobile.classList.add("active");
+          activeLinkMobile.classList.add(...activeClasses); // Mobile might use different styles? preserving previous logical parity
         }
       }
     });
@@ -936,7 +597,8 @@ const prevPost =
 
       // Wrap image in a container with cursor pointer
       const wrapper = document.createElement("div");
-      wrapper.className = "blog-image-wrapper";
+      wrapper.className =
+        "blog-image-wrapper transition-all duration-300 hover:-translate-y-0.5";
       wrapper.style.cssText = "position: relative; cursor: zoom-in;";
       const parent = img.parentNode;
       if (parent) {
@@ -944,33 +606,35 @@ const prevPost =
         wrapper.appendChild(img);
       }
 
-      // Create modal
+      // Create modal with Tailwind classes
       const modal = document.createElement("div");
       modal.id = `modal-${imageId}`;
-      modal.className = "blog-image-modal";
+      // Fixed overlay, hidden by default, flex when active
+      modal.className =
+        "fixed inset-0 z-[9999] hidden items-center justify-center opacity-0 transition-opacity duration-300 [&.active]:flex [&.active]:opacity-100";
       modal.innerHTML = `
-        <div class="modal-backdrop"></div>
-        <div class="modal-content">
-          <div class="modal-instructions">
-            <div class="instruction-badge" data-desktop-hint>
+        <div class="modal-backdrop absolute inset-0 bg-black/90"></div>
+        <div class="modal-content relative w-[95vw] h-[95vh] flex items-center justify-center z-10">
+          <div class="modal-instructions absolute top-4 left-1/2 -translate-x-1/2 flex flex-col gap-2 items-center z-10 pb-4">
+            <div class="instruction-badge bg-white/10 border border-white/20 rounded-full px-5 py-2 text-white text-sm sm:text-xs font-medium backdrop-blur-md animate-[bounce_1s_infinite]" data-desktop-hint>
               Click & hold to activate magnifying glass
             </div>
-            <div class="instruction-badge hidden" data-mobile-hint>
+            <div class="instruction-badge hidden bg-white/10 border border-white/20 rounded-full px-5 py-2 text-white text-sm sm:text-xs font-medium backdrop-blur-md animate-[bounce_1s_infinite]" data-mobile-hint>
               Pinch to zoom
             </div>
-            <div class="instruction-badge hidden" data-magnify-hint>
+            <div class="instruction-badge hidden bg-white/10 border border-white/20 rounded-full px-5 py-2 text-white text-sm sm:text-xs font-medium backdrop-blur-md animate-[bounce_1s_infinite]" data-magnify-hint>
               Scroll to zoom in/out
             </div>
           </div>
-          <button class="modal-close" aria-label="Close">
+          <button class="modal-close absolute top-4 right-4 bg-white/10 border border-white/20 rounded-lg p-3 text-white cursor-pointer z-10 transition-all duration-200 backdrop-blur-md hover:bg-white/20 hover:scale-110" aria-label="Close">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
-          <div class="modal-image-container">
-            <img src="${img.src}" alt="${img.alt}" class="modal-image" data-full-image />
-            <div class="magnify-lens" data-lens></div>
+          <div class="modal-image-container relative max-w-[90%] max-h-[90%] flex items-center justify-center sm:max-w-[95%]">
+            <img src="${img.src}" alt="${img.alt}" class="modal-image max-w-full max-h-[85vh] w-auto h-auto object-contain rounded-lg shadow-2xl cursor-pointer [&.magnifying]:cursor-none" data-full-image />
+            <div class="magnify-lens absolute w-[200px] h-[200px] border-[3px] border-white rounded-full pointer-events-none hidden bg-no-repeat shadow-[0_0_20px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(255,255,255,0.2)] z-50 overflow-hidden [&.active]:block" data-lens></div>
           </div>
         </div>
       `;

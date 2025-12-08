@@ -21,3 +21,19 @@
     --font-sans: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
+
+@layer components {
+  .excalidraw-light {
+    @apply hidden w-full h-auto;
+  }
+  .latte .excalidraw-light {
+    @apply block;
+  }
+
+  .excalidraw-dark {
+    @apply block w-full h-auto;
+  }
+  .latte .excalidraw-dark {
+    @apply hidden;
+  }
+}
