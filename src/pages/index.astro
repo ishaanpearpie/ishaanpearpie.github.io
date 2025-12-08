@@ -112,7 +112,7 @@ const latestPost = posts.length > 0 ? posts[0] : null;
 					<div>
 						<a
 							href="/blog"
-							class="group flex items-center gap-2 hover:bg-ctp-surface0 -ml-2 px-2 rounded transition-all w-fit"
+							class="group flex items-center gap-2 animate-gold-pulse -ml-2 px-2 rounded w-fit"
 						>
 							<span
 								class="text-ctp-yellow font-bold group-hover:text-ctp-teal transition-colors"
@@ -325,3 +325,21 @@ const latestPost = posts.length > 0 ? posts[0] : null;
 		updateUptime();
 	</script>
 </Layout>
+
+<style>
+	@keyframes gold-pulse {
+		0%,
+		100% {
+			background-color: transparent;
+			box-shadow: none;
+		}
+		50% {
+			background-color: rgba(249, 226, 175, 0.1);
+			box-shadow: 0 0 8px rgba(249, 226, 175, 0.4);
+		}
+	}
+
+	.animate-gold-pulse {
+		animation: gold-pulse 3s infinite ease-in-out;
+	}
+</style>
