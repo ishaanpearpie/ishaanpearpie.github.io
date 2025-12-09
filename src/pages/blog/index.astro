@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import BlogPostItem from '../../components/BlogPostItem.astro';
 import VimCursor from '../../components/VimCursor.astro';
 import TerminalPrompt from '../../components/TerminalPrompt.astro';
+import TerminalCommand from '../../components/TerminalCommand.astro';
 import { getBlogPosts } from '../../lib/blog';
 import SocialIcons from '../../components/SocialIcons.astro';
 
@@ -35,7 +36,7 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
 
 
         <h1 class="text-4xl sm:text-5xl md:text-7xl font-black mb-4 pb-2 flex items-baseline whitespace-nowrap">
-          <span class="text-ctp-text inline-block">My Thoughts</span><VimCursor />
+          <span class="text-ctp-text inline-block">My Thoughts</span><VimCursor width="30px" height="64px" />
         </h1>
 
         <!-- Socials & RSS -->
@@ -73,7 +74,13 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
 
         <div class="mb-1 font-mono text-ctp-text text-sm sm:text-lg">
           <TerminalPrompt user="blog" host="milind.dev" directory="~/posts">
-            <span class="terminal-command"></span><span class="terminal-pipe"></span><span class="terminal-cursor">█</span>
+            <TerminalCommand 
+              command="ls -la" 
+              startDelay={500}
+              id="blog-terminal-command"
+              onCompleteEventName="blog-typing-complete"
+            />
+            <span class="terminal-pipe"></span>
           </TerminalPrompt>
         </div>
 
@@ -199,35 +206,22 @@ const allTags = [...new Set(posts.flatMap(post => post.tags))].sort();
 <script>
   // Typing animation for ls -la command
   document.addEventListener('DOMContentLoaded', () => {
-    const commandElement = document.querySelector('.terminal-command') as HTMLElement | null;
-    const cursorElement = document.querySelector('.terminal-cursor') as HTMLElement | null;
-    const lsOutput = document.querySelector('.ls-output') as HTMLElement | null;
-    const command = 'ls -la';
-    let charIndex = 0;
+    // Typing animation replaced by TerminalCommand
+    window.addEventListener('blog-typing-complete', () => {
+       const cursorElement = document.getElementById('blog-terminal-command-cursor');
+       const lsOutput = document.querySelector('.ls-output');
 
-    // Type out the command character by character
-    function typeCommand() {
-      if (commandElement && charIndex < command.length) {
-        commandElement.textContent = command.slice(0, charIndex + 1);
-        charIndex++;
-        setTimeout(typeCommand, 100); // 100ms per character
-      } else {
-        // Command typing complete, hide cursor and show output
-        setTimeout(() => {
+       setTimeout(() => {
           if (cursorElement) {
             cursorElement.style.display = 'none';
           }
-          
-          // Show ls output with instant animation
           if (lsOutput) {
             lsOutput.classList.add('animate-in');
+            // Force opacity 1 just in case, though class handles it
+            (lsOutput as HTMLElement).style.opacity = '1';
           }
-        }, 200);
-      }
-    }
-
-    // Start typing animation
-    setTimeout(typeCommand, 500); // Start after 500ms delay
+       }, 200);
+    });
 
     // Tag filtering functionality
     const filterButtons = document.querySelectorAll('.tag-filter-btn');

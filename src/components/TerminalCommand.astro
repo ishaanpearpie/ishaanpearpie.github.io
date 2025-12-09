@@ -1,0 +1,54 @@
+---
+interface Props {
+    command: string;
+    typingSpeed?: number;
+    startDelay?: number;
+    id?: string;
+    onCompleteEventName?: string;
+    cursorWidth?: string;
+    cursorHeight?: string;
+}
+
+import VimCursor from "./VimCursor.astro";
+
+const {
+    command,
+    typingSpeed = 50,
+    startDelay = 200,
+    id = "terminal-command",
+    onCompleteEventName = "terminal-typing-complete",
+    cursorWidth = "10px",
+    cursorHeight = "1.25em",
+} = Astro.props;
+---
+
+<span class="inline-flex items-center">
+    <span id={`${id}-text`} class="text-ctp-text whitespace-pre"></span>
+    <span id={`${id}-cursor`}
+        ><VimCursor width={cursorWidth} height={cursorHeight} /></span
+    >
+</span>
+
+<script
+    define:vars={{ command, typingSpeed, startDelay, id, onCompleteEventName }}
+>
+    const textElement = document.getElementById(`${id}-text`);
+    const cursorElement = document.getElementById(`${id}-cursor`);
+    let i = 0;
+
+    function type() {
+        if (i < command.length) {
+            if (textElement) textElement.textContent += command.charAt(i);
+            i++;
+            setTimeout(type, typingSpeed + Math.random() * 30);
+        } else {
+            // Dispatch completion event
+            const event = new CustomEvent(onCompleteEventName, {
+                detail: { commandId: id },
+            });
+            window.dispatchEvent(event);
+        }
+    }
+
+    setTimeout(type, startDelay);
+</script>

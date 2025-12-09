@@ -1,18 +1,43 @@
-<span class="vim-cursor">|</span>
+---
+interface Props {
+    width?: string;
+    height?: string;
+    className?: string;
+}
+
+const { width = "10px", height = "1.25em", className = "" } = Astro.props;
+---
+
+<span
+    class={`vim-cursor ${className}`}
+    style={`--cursor-width: ${width}; --cursor-height: ${height};`}>&nbsp;</span
+>
 
 <style>
     .vim-cursor {
         display: inline-block;
-        animation: blink 1s step-end infinite;
-        color: var(--ctp-text);
+        width: var(--cursor-width);
+        height: var(--cursor-height);
+        background-color: var(--ctp-text, #cdd6f4); /* Fallback color */
+        animation: fade-blink 1.2s infinite; /* Slightly slower loop */
+        vertical-align: text-bottom;
+        margin-left: 2px;
     }
 
-    @keyframes blink {
-        0%,
-        50% {
-            opacity: 1;
+    @keyframes fade-blink {
+        0% {
+            opacity: 0;
+            animation-timing-function: ease-in;
         }
-        50.1%,
+        40% {
+            opacity: 1; /* Reach full opacity sooner */
+        }
+        55% {
+            opacity: 1; /* Stay visible for a bit */
+        }
+        56% {
+            opacity: 0; /* Instant disappear */
+        }
         100% {
             opacity: 0;
         }

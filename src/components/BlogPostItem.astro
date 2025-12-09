@@ -54,31 +54,21 @@ function getWordCountColor(count: number): string {
 }
 
 // Helper function to generate Unix permissions based on index
-function getPermissions(
-  idx: number,
-  isDraft: boolean,
-): { type: string; owner: string; group: string; other: string } {
-  if (isDraft) {
-    // File permissions for drafts
-    const filePerms = [
-      { type: "-", owner: "rw-", group: "r--", other: "r--" }, // 644
-      { type: "-", owner: "rw-", group: "---", other: "---" }, // 600
-      { type: "-", owner: "rw-", group: "rw-", other: "r--" }, // 664
-      { type: "-", owner: "rw-", group: "r--", other: "---" }, // 640
-      { type: "-", owner: "rwx", group: "r-x", other: "r-x" }, // 755
-    ];
-    return filePerms[idx % filePerms.length];
-  } else {
-    // Directory permissions for published posts
-    const dirPerms = [
-      { type: "d", owner: "rwx", group: "r-x", other: "r-x" }, // 755
-      { type: "d", owner: "rwx", group: "rwx", other: "r-x" }, // 775
-      { type: "d", owner: "rwx", group: "r-x", other: "---" }, // 750
-      { type: "d", owner: "rwx", group: "---", other: "---" }, // 700
-      { type: "d", owner: "rwx", group: "rw-", other: "r--" }, // 764
-    ];
-    return dirPerms[idx % dirPerms.length];
-  }
+function getPermissions(idx: number): {
+  type: string;
+  owner: string;
+  group: string;
+  other: string;
+} {
+  // File permissions for all posts (random but sane)
+  const permissions = [
+    { type: "-", owner: "rw-", group: "r--", other: "r--" }, // 644
+    { type: "-", owner: "rwx", group: "r-x", other: "r-x" }, // 755
+    { type: "-", owner: "rw-", group: "rw-", other: "r--" }, // 664
+    { type: "-", owner: "rw-", group: "r--", other: "---" }, // 640
+    { type: "-", owner: "rwx", group: "r-x", other: "--x" }, // 751
+  ];
+  return permissions[idx % permissions.length];
 }
 
 const colorClass = getTerminalColor(index);
@@ -94,7 +84,7 @@ const colorHexMap: Record<string, string> = {
 const iconColor = colorHexMap[colorClass] || "94e2d5"; // default to teal
 
 const isDraft = draft;
-const permissions = getPermissions(index, isDraft);
+const permissions = getPermissions(index);
 const formattedDate = formatDateCompact(date);
 const wordCountFormatted = formatWordCount(wordCount);
 const wordCountColor = getWordCountColor(wordCount);

@@ -3,11 +3,17 @@ import Layout from "../layouts/Layout.astro";
 import { fetchGithubStats } from "../lib/github";
 import { formatTimeAgo } from "../lib/date";
 import TerminalPrompt from "../components/TerminalPrompt.astro";
+import TerminalCommand from "../components/TerminalCommand.astro";
 import DiscordStatus from "../components/DiscordStatus";
 import SocialIcons from "../components/SocialIcons.astro";
 import { personalInfo, experience, education } from "../lib/constants";
 
-import { SOCIAL_CONFIG, TERMINAL_CONFIG, BIRTH_DATE, DISCORD_ID } from "../lib/constants";
+import {
+	SOCIAL_CONFIG,
+	TERMINAL_CONFIG,
+	BIRTH_DATE,
+	DISCORD_ID,
+} from "../lib/constants";
 import { getBlogPosts } from "../lib/blog";
 
 export const prerender = false;
@@ -27,10 +33,11 @@ const latestPost = posts.length > 0 ? posts[0] : null;
 				user={TERMINAL_CONFIG.user}
 				host={TERMINAL_CONFIG.host}
 			>
-				<span id="typewriter" class="text-ctp-text"></span><span
-					id="cursor"
-					class="text-ctp-text animate-pulse">█</span
-				>
+				<TerminalCommand
+					command="fastfetch"
+					id="main-terminal-command"
+					onCompleteEventName="main-typing-complete"
+				/>
 			</TerminalPrompt>
 		</div>
 
@@ -235,49 +242,53 @@ const latestPost = posts.length > 0 ? posts[0] : null;
 	</div>
 
 	<script define:vars={{ BIRTH_DATE }}>
-		// Typewriter animation
-		const text = "fastfetch";
-		const typewriter = document.getElementById("typewriter");
+		// Typewriter logic replaced by TerminalCommand component
 		const fetchOutput = document.getElementById("fetch-output");
-		const cursor = document.getElementById("cursor");
-		let i = 0;
+		let typingCompleted = false;
 
-		function type() {
-			if (i < text.length) {
-				if (typewriter) typewriter.textContent += text.charAt(i);
-				i++;
-				setTimeout(type, 50 + Math.random() * 50);
+		function handleReady() {
+			const cursor = document.getElementById(
+				"main-terminal-command-cursor",
+			);
+			if (fetchOutput) fetchOutput.classList.remove("hidden");
+			// Optional: Hide cursor after command executes
+			// if (cursor) cursor.style.display = "none";
+			// User request: "move it as the command is typed".
+			// Usually shells keep cursor or move to next line.
+			// Given the layout, the output appears below. The command prompt stays.
+			// The original implementation hid the cursor. I will hide it to imply execution started.
+			if (cursor) cursor.style.display = "none";
+		}
+
+		// Lanyard Logic
+		let isLanyardReady = false;
+
+		const onLanyardReady = () => {
+			if (!isLanyardReady) {
+				isLanyardReady = true;
+				if (typingCompleted) {
+					handleReady();
+				}
+			}
+		};
+
+		window.addEventListener("lanyard-ready", onLanyardReady);
+
+		// Typing Completion Logic
+		window.addEventListener("main-typing-complete", () => {
+			typingCompleted = true;
+			if (isLanyardReady) {
+				handleReady();
 			} else {
-				// Determine if we should wait for Lanyard
-				let isReady = false;
-				const showOutput = () => {
-					if (fetchOutput) fetchOutput.classList.remove("hidden");
-					if (cursor) cursor.style.display = "none";
-				};
-
-				const onReady = () => {
-					if (!isReady) {
-						isReady = true;
-						showOutput();
-					}
-				};
-
-				window.addEventListener("lanyard-ready", onReady);
-
-				// Fallback timeout in case Lanyard fails or is slow (2s max wait after typing)
+				// Fallback if Lanyard takes too long (2s)
 				setTimeout(() => {
-					if (!isReady) {
-						isReady = true;
-						showOutput();
-						// Remove listener if we timed out to avoid double call (though flag handles it)
-						window.removeEventListener("lanyard-ready", onReady);
+					if (!isLanyardReady) {
+						// Proceed regardless
+						handleReady();
 					}
 				}, 2000);
 			}
-		}
-
-		// Start typing after a short delay
-		setTimeout(type, 200);
+		});
 
 		// Uptime Logic
 		function updateUptime() {
