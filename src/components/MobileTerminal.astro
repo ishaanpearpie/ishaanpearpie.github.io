@@ -24,10 +24,16 @@ const commands = [
 
 <div class="flex flex-col gap-16 pb-20">
     {
-        commands.map((cmd) => (
+        commands.map((cmd, index) => (
             <div
-                class="mobile-command-section opacity-0 transition-opacity duration-500"
+                id={`section-${cmd.id}`}
+                class={`mobile-command-section opacity-0 transition-opacity duration-500 ${index !== 0 ? "hidden" : ""}`}
                 data-trigger-event={cmd.triggerEvent}
+                data-next-section={
+                    index < commands.length - 1
+                        ? `section-${commands[index + 1].id}`
+                        : undefined
+                }
             >
                 <div class="mb-4">
                     <TerminalPrompt
@@ -53,18 +59,18 @@ const commands = [
     }
 </div>
 
-<script>
+<script define:vars={{ commandIds: commands.map((c) => c.id) }}>
     // Intersection Observer to trigger animations
     const observerOptions = {
         root: null,
         rootMargin: "0px",
-        threshold: 0.3,
+        threshold: 0.1, // Trigger slightly earlier/easier
     };
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
-                const element = entry.target as HTMLElement;
+                const element = entry.target;
                 const triggerEvent = element.dataset.triggerEvent;
 
                 if (triggerEvent && !element.classList.contains("triggered")) {
@@ -79,13 +85,18 @@ const commands = [
         });
     }, observerOptions);
 
+    // Initial observation (only the visible ones)
+    // We'll use a MutationObserver or just re-observe when we show new ones?
+    // Actually, we can just observe all of them. Hidden elements won't intersect.
+    // Wait, intersection observer on hidden (display: none) elements doesn't work.
+    // That's fine. We observe them. When we remove "hidden", if they are in viewport, they will intersect.
+
     document.querySelectorAll(".mobile-command-section").forEach((section) => {
         observer.observe(section);
     });
 
-    // Listen for completion to show output
-    const commands = ["mobile-fastfetch", "mobile-whoami"];
-    commands.forEach((id) => {
+    // Listen for completion to show output and reveal next
+    commandIds.forEach((id) => {
         window.addEventListener(`${id}-complete`, () => {
             const output = document.getElementById(`${id}-output`);
             if (output) {
@@ -95,6 +106,17 @@ const commands = [
             // Hide cursor
             const cursor = document.getElementById(`${id}-cursor`);
             if (cursor) cursor.style.display = "none";
+
+            // Reveal Next Section
+            const currentSection = document.getElementById(`section-${id}`);
+            if (currentSection && currentSection.dataset.nextSection) {
+                const nextSectionId = currentSection.dataset.nextSection;
+                const nextSection = document.getElementById(nextSectionId);
+                if (nextSection) {
+                    nextSection.classList.remove("hidden");
+                    // Observer is already watching it, so if it's in viewport, it will trigger.
+                }
+            }
         });
     });
 </script>
