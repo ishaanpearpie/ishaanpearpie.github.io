@@ -1,11 +1,12 @@
 
 import fs from "fs";
 import path from "path";
+import os from "os";
 
-import { CACHE_FILE_PATH, GITHUB_USERNAME, GITHUB_API_URL } from "./constants";
+import { GITHUB_USERNAME, GITHUB_API_URL } from "./constants";
 
-const CACHE_FILE = path.join(process.cwd(), CACHE_FILE_PATH);
-const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
+const CACHE_FILE = path.join(os.tmpdir(), "github-stats-cache.json");
+const CACHE_DURATION = 1000 * 60 * 2; // 2 minutes
 
 interface GithubStats {
     repos: number;
@@ -77,11 +78,16 @@ export const fetchGithubStats = async (): Promise<GithubStats | null> => {
         };
 
         // Write to cache
-        const cacheData: CacheData = {
-            timestamp: Date.now(),
-            data: stats
-        };
-        fs.writeFileSync(CACHE_FILE, JSON.stringify(cacheData));
+        try {
+            const cacheData: CacheData = {
+                timestamp: Date.now(),
+                data: stats
+            };
+            fs.writeFileSync(CACHE_FILE, JSON.stringify(cacheData));
+        } catch (writeError) {
+            console.error("Error writing to cache:", writeError);
+            // Ignore write error, still return fresh data
+        }
 
         return stats;
 
