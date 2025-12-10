@@ -21,6 +21,6 @@ COPY --from=builder /app/ssh-server /ssh-server
 
 ENV HOST_KEY_PATH=/data/id_ed25519
 
-EXPOSE 2222
+EXPOSE 22
 
 ENTRYPOINT ["/ssh-server"]

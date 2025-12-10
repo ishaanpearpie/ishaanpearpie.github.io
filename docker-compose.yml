@@ -8,13 +8,13 @@ services:
       - BLOG_REPO_URL=${BLOG_REPO_URL}
       - LANYARD_SOCKET_URL=${LANYARD_SOCKET_URL}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
-    networks:
-      - reverse_proxy
 
   ssh-portfolio:
     image: ghcr.io/milindmadhukar/portfolio-ssh:latest
     container_name: ssh-portfolio
     restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     read_only: true
     cap_drop:
       - ALL
@@ -22,8 +22,6 @@ services:
       - no-new-privileges:true
     volumes:
       - ./ssh_data:/data
-    networks:
-      - reverse_proxy
 
   cloudflared:
     image: cloudflare/cloudflared:latest
@@ -32,11 +30,3 @@ services:
     command: tunnel run
     environment:
       - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
-    networks:
-      - reverse_proxy
-
-networks:
-  reverse_proxy:
-    external: true
-
-
