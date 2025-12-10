@@ -1,0 +1,24 @@
+services:
+  portfolio:
+    image: ghcr.io/milindmadhukar/portfolio:latest
+    container_name: portfolio
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - BLOG_REPO_GH_TOKEN=${BLOG_REPO_GH_TOKEN}
+      - BLOG_REPO_URL=${BLOG_REPO_URL}
+      - LANYARD_SOCKET_URL=${LANYARD_SOCKET_URL}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portfolio.rule=Host(`milind.dev`)"
+      - "traefik.http.routers.portfolio.entrypoints=web,websecure"
+      - "traefik.http.routers.portfolio.tls.certresolver=milindsresolver"
+      - "traefik.http.services.portfolio.loadbalancer.server.port=4321"
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - reverse_proxy
+
+networks:
+  reverse_proxy:
+    external: true

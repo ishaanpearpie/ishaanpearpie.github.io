@@ -183,7 +183,7 @@ const latestPost = posts.length > 0 ? posts[0] : null;
                 <DiscordStatus
                     client:load
                     userId={DISCORD_ID}
-                    socketUrl={import.meta.env.LANYARD_SOCKET_URL}
+                    socketUrl={process.env.LANYARD_SOCKET_URL || ""}
                 />
             </div>
             <div class="text-ctp-overlay1">--------------------------</div>

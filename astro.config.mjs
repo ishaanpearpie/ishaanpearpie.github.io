@@ -1,6 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel';
+import node from '@astrojs/node';
 
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
@@ -12,12 +12,14 @@ import { remarkObsidianExcalidraw } from './src/plugins/remark-obsidian-excalidr
 export default defineConfig({
   site: 'https://milind.dev',
   output: 'server',
-  adapter: vercel({
-    imageService: true,
-    isr: {
-      expiration: 60,
-    },
+  adapter: node({
+    mode: 'standalone',
   }),
+  image: {
+    service: {
+      entrypoint: 'astro/assets/services/sharp'
+    }
+  },
   integrations: [react()],
   server: {
     host: true
