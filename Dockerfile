@@ -13,14 +13,14 @@ RUN bun install --frozen-lockfile
 # Copy source
 COPY . .
 
-# Build arguments for blog sync
-ARG GITHUB_TOKEN
-ARG BLOG_REPO_URL
-ENV GITHUB_TOKEN=${GITHUB_TOKEN}
-ENV BLOG_REPO_URL=${BLOG_REPO_URL}
+ENV ASTRO_TELEMETRY_DISABLED=1
 
 # Build the application
-RUN bun run build
+RUN --mount=type=secret,id=gh_token \
+    --mount=type=secret,id=blog_repo_url \
+    GITHUB_TOKEN=$(cat /run/secrets/gh_token) \
+    BLOG_REPO_URL=$(cat /run/secrets/blog_repo_url) \
+    bun run build
 
 # Production image
 FROM oven/bun:1-alpine AS release

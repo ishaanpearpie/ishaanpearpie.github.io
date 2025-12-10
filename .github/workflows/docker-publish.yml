@@ -65,9 +65,10 @@ jobs:
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args: |
-            GITHUB_TOKEN=${{ secrets.PAT_TOKEN }}
-            BLOG_REPO_URL=${{ secrets.BLOG_REPO_URL }}
+          # build-args are not needed for secrets when using --mount
+          secrets: |
+            gh_token=${{ secrets.PAT_TOKEN }}
+            blog_repo_url=${{ secrets.BLOG_REPO_URL }}
 
       - name: Sign the published Docker image
         if: ${{ github.event_name != 'pull_request' }}
