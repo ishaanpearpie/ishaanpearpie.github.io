@@ -137,25 +137,41 @@ import { TERMINAL_CONFIG } from "../lib/constants";
     <!-- Scroll Indicator -->
     <div
         id="scroll-indicator"
-        class="fixed bottom-8 right-8 z-50 transition-opacity duration-300 pointer-events-none hidden"
+        class="fixed bottom-12 left-1/2 -translate-x-1/2 z-50 transition-opacity duration-300 pointer-events-none hidden"
     >
         <div
-            class="flex flex-col items-center gap-2 animate-bounce text-ctp-overlay1"
+            class="flex flex-col items-center gap-2 animate-bounce text-ctp-peach drop-shadow-md"
         >
-            <span class="text-sm font-mono">SCROLL</span>
-            <i class="nf nf-fa-angle_down text-xl"></i>
+            <span class="text-sm font-bold font-mono tracking-widest"
+                >SCROLL</span
+            >
+            <i class="nf nf-fa-angle_down text-2xl"></i>
         </div>
     </div>
 </div>
 
 <style>
-    /* Hide Scrollbar */
+    /* Catppuccin Scrollbar */
     #desktop-scroll-container {
-        scrollbar-width: none; /* Firefox */
-        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-ctp-surface0) transparent;
     }
+
     #desktop-scroll-container::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera */
+        width: 6px;
+    }
+
+    #desktop-scroll-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    #desktop-scroll-container::-webkit-scrollbar-thumb {
+        background-color: var(--color-ctp-surface0);
+        border-radius: 9999px;
+    }
+
+    #desktop-scroll-container::-webkit-scrollbar-thumb:hover {
+        background-color: var(--color-ctp-surface1);
     }
 </style>
 
