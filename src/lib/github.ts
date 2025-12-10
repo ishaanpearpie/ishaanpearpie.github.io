@@ -54,8 +54,14 @@ export const fetchGithubStats = async (): Promise<GithubStats | null> => {
     }
 
     // Fetch User Data
+    console.log(`Fetching GitHub data for ${username}... Token present: ${!!token}`);
     const userRes = await fetch(`${apiUrl}/users/${username}`, { headers });
-    if (!userRes.ok) throw new Error("Failed to fetch user data");
+    if (!userRes.ok) {
+      console.error(`GitHub API Error: ${userRes.status} ${userRes.statusText}`);
+      const text = await userRes.text();
+      console.error(`Response body: ${text}`);
+      throw new Error(`Failed to fetch user data: ${userRes.status}`);
+    }
     const userData = await userRes.json();
 
     // Fetch Events for Last Push
