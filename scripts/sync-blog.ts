@@ -96,8 +96,10 @@ async function syncFromGitHub(token: string) {
       execSync(`git clone --depth 1 ${repoUrlWithAuth} ${tempDir}`, {
         stdio: 'pipe'
       });
-    } catch (error) {
-      throw new Error(`Git clone failed: ${error}`);
+    } catch (error: any) {
+      const stderr = error.stderr ? error.stderr.toString() : '';
+      console.error('Git clone failed details:', stderr);
+      throw new Error(`Git clone failed: ${error.message}`);
     }
 
     // Copy content to blog folder

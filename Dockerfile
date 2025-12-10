@@ -10,6 +10,12 @@ RUN bun install --frozen-lockfile
 # Copy source
 COPY . .
 
+# Build arguments for blog sync
+ARG GITHUB_TOKEN
+ARG BLOG_REPO_URL
+ENV GITHUB_TOKEN=${GITHUB_TOKEN}
+ENV BLOG_REPO_URL=${BLOG_REPO_URL}
+
 # Build the application
 RUN bun run build
 
