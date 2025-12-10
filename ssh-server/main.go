@@ -24,7 +24,7 @@ const (
 func main() {
 	s, err := wish.NewServer(
 		wish.WithAddress(fmt.Sprintf("%s:%d", host, port)),
-		wish.WithHostKeyPath("/id_ed25519"),
+		wish.WithHostKeyPath(getHostKeyPath()),
 		wish.WithMiddleware(
 			logging.Middleware(),
 			func(h ssh.Handler) ssh.Handler {
@@ -32,14 +32,14 @@ func main() {
 					// Request a PTY logic would go here if we needed complex terminal handling
 					// For a simple REPL, we can just handle the session directly or use a Bubble Tea model.
 					// Let's implement a simple REPL loop here.
-					
+
 					// Setup terminal
 					term := term.NewTerminal(s, "$ ")
-					
+
 					// Welcome message
 					fmt.Fprintln(s, "Welcome to the sandboxed SSH server!")
 					fmt.Fprintln(s, "Type 'help' for a list of commands.")
-					
+
 					for {
 						line, err := term.ReadLine()
 						if err != nil {
@@ -47,21 +47,21 @@ func main() {
 						}
 
 						line = sortOfSanitize(line)
-						
+
 						if line == "exit" {
 							fmt.Fprintln(s, "Goodbye!")
 							break
 						}
-						
+
 						if line == "clear" {
-							fmt.Fprint(s, "\033[H\033[2J") 
+							fmt.Fprint(s, "\033[H\033[2J")
 							continue
 						}
 
 						output := commands.HandleCommand(line, s.User())
 						fmt.Fprint(s, output)
 					}
-					
+
 					h(s)
 				}
 			},
@@ -90,6 +90,13 @@ func main() {
 }
 
 func sortOfSanitize(s string) string {
-    // Basic trimming, could potentially remove control characters if needed
+	// Basic trimming, could potentially remove control characters if needed
 	return s
+}
+
+func getHostKeyPath() string {
+	if path := os.Getenv("HOST_KEY_PATH"); path != "" {
+		return path
+	}
+	return "id_ed25519"
 }
