@@ -31,8 +31,14 @@ import { TERMINAL_CONFIG } from "../lib/constants";
           2. Scrollable Foreground (The Ghost Sections)
     -->
 
-    <!-- Fixed Terminal Background (Visuals) -->
-    <div class="fixed inset-0 z-0 flex flex-col pt-12 pointer-events-none p-8">
+    <!-- 
+        Sticky Visual Layer 
+        Using sticky + negative margin ensures scroll events bubble correctly within the container
+        instead of escaping to the body (which has overflow:hidden).
+    -->
+    <div
+        class="sticky top-0 h-screen w-full z-20 flex flex-col pt-12 pointer-events-none p-8"
+    >
         <div
             id="terminal-content"
             class="font-mono text-base md:text-base lg:text-lg xl:text-xl leading-tight w-fit pointer-events-auto"
@@ -118,7 +124,7 @@ import { TERMINAL_CONFIG } from "../lib/constants";
     </div>
 
     <!-- Scroll Track (Ghost Sections for Snapping) -->
-    <div class="relative z-10 w-full">
+    <div class="relative z-10 w-full -mt-[100vh]">
         <!-- Section 1: Fastfetch View -->
         <section class="h-screen w-full snap-start" data-state="fastfetch">
         </section>
@@ -215,7 +221,7 @@ import { TERMINAL_CONFIG } from "../lib/constants";
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting && !isAnimating) {
-                const targetState = entry.target.dataset.state;
+                const targetState = (entry.target as HTMLElement).dataset.state;
 
                 // Toggle Indicator based on state
                 if (targetState === "fastfetch") {
