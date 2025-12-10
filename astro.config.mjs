@@ -35,7 +35,10 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [remarkObsidianExcalidraw, remarkObsidianLinks],
     shikiConfig: {
-      theme: 'dracula',
+      themes: {
+        light: 'catppuccin-latte',
+        dark: 'catppuccin-mocha'
+      },
       wrap: true
     }
   }

@@ -18,27 +18,31 @@
 @custom-variant latte (&:where(.latte, .latte *));
 
 @theme {
-    --font-sans: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-sans: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-    --animate-gold-pulse: gold-pulse 3s infinite ease-in-out;
+  --animate-gold-pulse: gold-pulse 3s infinite ease-in-out;
 
-    @keyframes gold-pulse {
-        0%, 100% {
-            background-color: transparent;
-            box-shadow: none;
-        }
-        50% {
-            background-color: rgba(249, 226, 175, 0.1);
-            box-shadow: 0 0 8px rgba(249, 226, 175, 0.4);
-        }
+  @keyframes gold-pulse {
+
+    0%,
+    100% {
+      background-color: transparent;
+      box-shadow: none;
     }
+
+    50% {
+      background-color: rgba(249, 226, 175, 0.1);
+      box-shadow: 0 0 8px rgba(249, 226, 175, 0.4);
+    }
+  }
 }
 
 @layer components {
   .excalidraw-light {
     @apply hidden w-full h-auto;
   }
+
   .latte .excalidraw-light {
     @apply block;
   }
@@ -46,19 +50,50 @@
   .excalidraw-dark {
     @apply block w-full h-auto;
   }
+
   .latte .excalidraw-dark {
     @apply hidden;
   }
 }
+
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
+
 .animate-fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Shiki Theme Switching */
+/* 
+ * Astro's Shiki integration applies the 'light' theme as default inline styles (color: #...).
+ * The 'dark' theme variables are set as custom properties (--shiki-dark).
+ * 
+ * 1. Deep Dark Mode (default for this user): 
+ *    When .latte is NOT present, we force usage of the --shiki-dark variables.
+ * 
+ * 2. Light Mode (.latte present):
+ *    We do NOTHING. We let the inline `style="color:..."` take precedence, 
+ *    which contains the correct light theme colors.
+ */
+html:not(.latte) .astro-code,
+html:not(.latte) .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
 }
