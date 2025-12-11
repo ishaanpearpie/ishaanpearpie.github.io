@@ -22,6 +22,10 @@ services:
     image: ghcr.io/milindmadhukar/portfolio-ssh:latest
     container_name: ssh-portfolio
     restart: always
+    environment:
+      - SSH_HOST=0.0.0.0
+      - SSH_PORT=2222
+      - PORTFOLIO_API=http://portfolio:4321/api/commands
     labels:
       - "traefik.enable=true"
       - "traefik.tcp.routers.ssh.rule=HostSNI(`*`)"

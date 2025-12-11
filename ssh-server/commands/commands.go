@@ -1,9 +1,24 @@
 package commands
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"strings"
 )
+
+var apiURL string
+
+type APIResponse struct {
+	Fastfetch string `json:"fastfetch"`
+	Whoami    string `json:"whoami"`
+	Help      string `json:"help"`
+}
+
+func Init(url string) {
+	apiURL = url
+}
 
 // HandleCommand processes the input command and returns the output.
 func HandleCommand(input string, user string) string {
@@ -14,13 +29,21 @@ func HandleCommand(input string, user string) string {
 
 	cmd := args[0]
 
+	// Fetch data from API
+	// TODO: Consider caching or error handling if API is down
+	data, err := fetchCommands()
+	if err != nil {
+		// Fallback or error message
+		return fmt.Sprintf("Error fetching commands: %v\n", err)
+	}
+
 	switch cmd {
 	case "whoami":
-		return fmt.Sprintf("%s\n", user)
+		return data.Whoami + "\n"
 	case "fastfetch":
-		return getFastFetch()
+		return data.Fastfetch + "\n"
 	case "help":
-		return "Available commands: whoami, fastfetch, help, exit\n"
+		return data.Help + "\n"
 	case "exit":
 		return "Goodbye!\n"
 	default:
@@ -28,30 +51,30 @@ func HandleCommand(input string, user string) string {
 	}
 }
 
-func getFastFetch() string {
-	// Lorem Ipsum based fastfetch output
-	return `
-       .
-      / \
-     /   \      Lorem Ipsum User
-    /     \     ----------------
-   /_______\    OS: Custom SSH OS
-  /         \   Host: milind.dev
- /___________\  Kernel: 1.0.0-sandbox
-                Uptime: Forever
-                Packages: 0 (dpkg)
-                Shell: ssh-sandbox
-                Resolution: 1920x1080
-                DE: None
-                WM: None
-                Theme: Default
-                Icons: Default
-                Terminal: SSH
-                CPU: Virtual CPU
-                GPU: Virtual GPU
-                Memory: 100MiB / 1GiB
+func fetchCommands() (*APIResponse, error) {
+	if apiURL == "" {
+		return nil, fmt.Errorf("API URL not set")
+	}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-`
+	resp, err := http.Get(apiURL)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("API returned status: %s", resp.Status)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var data APIResponse
+	if err := json.Unmarshal(body, &data); err != nil {
+		return nil, err
+	}
+
+	return &data, nil
 }

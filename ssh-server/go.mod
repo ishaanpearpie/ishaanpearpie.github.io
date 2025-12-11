@@ -5,6 +5,7 @@ go 1.25.5
 require (
 	github.com/charmbracelet/ssh v0.0.0-20250826160808-ebfa259c7309
 	github.com/charmbracelet/wish v1.4.7
+	github.com/joho/godotenv v1.5.1
 	golang.org/x/term v0.38.0
 )
 
