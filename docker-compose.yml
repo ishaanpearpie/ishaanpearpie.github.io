@@ -24,7 +24,7 @@ services:
     restart: always
     environment:
       - SSH_HOST=0.0.0.0
-      - SSH_PORT=2222
+      - SSH_PORT=${SSH_PORT}
       - PORTFOLIO_API=http://portfolio:4321/api/commands
     labels:
       - "traefik.enable=true"
@@ -35,8 +35,6 @@ services:
     read_only: true
     cap_drop:
       - ALL
-    security_opt:
-      - no-new-priviseges:true
     volumes:
       - ./ssh_data:/data
     networks:

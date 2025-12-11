@@ -52,8 +52,24 @@ func main() {
 			logging.Middleware(),
 			func(h ssh.Handler) ssh.Handler {
 				return func(s ssh.Session) {
+					// Define colors for prompt
+					// Catppuccin Macchiato/Mocha approximations
+					cRed := "\033[38;5;203m"     // Red/Pink
+					cBlue := "\033[38;5;117m"    // Sky/Blue
+					cGrey := "\033[38;5;240m"    // Overlay
+					cMagenta := "\033[38;5;183m" // Mauve/Magenta
+					cReset := "\033[0m"
+
+					// Prompt: ❯ user@milind.dev:~$
+					prompt := fmt.Sprintf("%s❯ %s%s%s@%smilind.dev%s:~$ ",
+						cMagenta,
+						cRed, s.User(),
+						cGrey,
+						cBlue,
+						cReset)
+
 					// Setup terminal
-					term := term.NewTerminal(s, "$ ")
+					term := term.NewTerminal(s, prompt)
 
 					// Welcome message
 					// "When a client connects run the fast fetch command and say type help for more commands"
