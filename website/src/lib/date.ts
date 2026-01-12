@@ -1,6 +1,6 @@
 /**
  * Parse a date string in DD-MM-YYYY HH:mm A format to a Date object
- * @param dateString - Date string in format "DD-MM-YYYY HH:mm A" (e.g., "23-11-2025 03:10 PM")
+ * @param dateString - Date string in format "DD-MM-YYYY HH:mm A" or "D-M-YYYY HH:mm A" (e.g., "23-11-2025 03:10 PM" or "1-1-2026 1:00 PM")
  * @returns Date object (interprets time as IST/UTC+5:30)
  */
 export function parseCustomDate(dateString: string | Date): Date {
@@ -20,8 +20,8 @@ export function parseCustomDate(dateString: string | Date): Date {
     return new Date();
   }
 
-  // Parse DD-MM-YYYY HH:mm A format
-  const regex = /^(\d{2})-(\d{2})-(\d{4})\s+(\d{1,2}):(\d{2})\s+(AM|PM)$/i;
+  // Parse DD-MM-YYYY HH:mm A format (supports 1 or 2 digits for day and month)
+  const regex = /^(\d{1,2})-(\d{1,2})-(\d{4})\s+(\d{1,2}):(\d{2})\s+(AM|PM)$/i;
   const match = dateString.match(regex);
 
   if (!match) {
@@ -47,12 +47,14 @@ export function parseCustomDate(dateString: string | Date): Date {
 
   // Create date object in IST (UTC+5:30)
   // First create the date string in ISO format with IST timezone offset
+  // Note: ISO format is YYYY-MM-DD, and our input is DD-MM-YYYY
   const paddedMonth = month.padStart(2, '0');
   const paddedDay = day.padStart(2, '0');
   const paddedHours = hours.toString().padStart(2, '0');
   const paddedMinutes = minute.padStart(2, '0');
 
   // IST is UTC+5:30, so we use +05:30 offset
+  // ISO format requires YYYY-MM-DD order (month is in the middle)
   const isoString = `${year}-${paddedMonth}-${paddedDay}T${paddedHours}:${paddedMinutes}:00+05:30`;
   return new Date(isoString);
 }
