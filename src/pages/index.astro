@@ -18,8 +18,6 @@ import {
 } from "../lib/constants";
 import { getBlogPosts } from "../lib/blog";
 
-export const prerender = false;
-
 const githubStats = await fetchGithubStats();
 const posts = getBlogPosts();
 const latestPost = posts.length > 0 ? posts[0] : null;

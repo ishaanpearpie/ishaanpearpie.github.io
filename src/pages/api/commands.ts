@@ -2,6 +2,8 @@
 import type { APIRoute } from 'astro';
 import { getFastfetch, getWhoami, getHelp } from '../../lib/terminal-commands';
 
+export const prerender = true;
+
 export const GET: APIRoute = async () => {
     const fastfetch = await getFastfetch();
     const whoami = getWhoami();
