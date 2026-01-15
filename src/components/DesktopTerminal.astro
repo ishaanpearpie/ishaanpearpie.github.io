@@ -37,11 +37,11 @@ import { TERMINAL_CONFIG } from "../lib/constants";
         instead of escaping to the body (which has overflow:hidden).
     -->
     <div
-        class="sticky top-0 h-screen w-full z-20 flex flex-col pt-12 pointer-events-none p-8"
+        class="sticky top-0 max-h-screen w-full z-20 flex flex-col pt-12 pointer-events-none p-8 overflow-y-auto"
     >
         <div
             id="terminal-content"
-            class="font-mono text-base md:text-base lg:text-lg xl:text-xl leading-tight w-fit pointer-events-auto"
+            class="font-mono text-base md:text-base lg:text-lg xl:text-xl leading-tight w-fit pointer-events-auto pb-20"
         >
             <!-- STATE 1: FASTFETCH -->
             <div
