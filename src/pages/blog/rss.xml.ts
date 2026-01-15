@@ -22,7 +22,7 @@ export async function GET(context: APIContext) {
     siteUrl = context.url.origin;
   } else {
     // In production, use the configured site or fallback
-    siteUrl = (context.site?.toString() || 'https://milind.dev').replace(/\/$/, '');
+    siteUrl = (context.site?.toString() || 'https://ishaan-jain.me').replace(/\/$/, '');
   }
 
   // Convert glob result to array format
@@ -67,10 +67,10 @@ export async function GET(context: APIContext) {
         content = await post.compiledContent();
 
         // Convert relative URLs to absolute URLs for images and links
-        // Replace src="/_astro/..." with src="https://milind.dev/_astro/..."
+        // Replace src="/_astro/..." with src="https://ishaan-jain.me/_astro/..."
         content = content.replace(/src="(\/[^"]+)"/g, `src="${siteUrl}$1"`);
 
-        // Replace href="/" with href="https://milind.dev/"
+        // Replace href="/" with href="https://ishaan-jain.me/"
         content = content.replace(/href="(\/[^"]+)"/g, `href="${siteUrl}$1"`);
 
         // Fix Excalidraw theme-aware images for RSS

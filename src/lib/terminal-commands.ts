@@ -30,7 +30,7 @@ export const getFastfetch = async () => {
     // ASCII Art (Desktop version primarily)
     const ascii = [
         `   ,=====================.`,
-        `   |MILIND'S  LAB  /6000/|`,
+        `   |ISHAAN'S LAB  /6000/|`,
         `   |.-------------------.|`,
         `   ||[ _ o     . .  _ ]_||`,
         `   |\`-------------------'|`,
@@ -62,7 +62,7 @@ export const getFastfetch = async () => {
     const info = [];
 
     // User@Host
-    info.push(`${red("portfolio")}${overlay("@")}${cyan("milind.dev")}`);
+    info.push(`${red("portfolio")}${overlay("@")}${cyan("ishaan-jain.me")}`);
     info.push(overlay("--------------------------"));
 
     // Role

@@ -2,10 +2,10 @@ import { calculateAge } from "./date";
 
 export const TERMINAL_CONFIG = {
   user: "portfolio",
-  host: "milind.dev",
+  host: "ishaan-jain.me",
 };
 
-export const BIRTH_DATE = "2004-04-15";
+export const BIRTH_DATE = "2004-02-09";
 
 export const SOCIAL_CONFIG: Record<string, { icon: string; color: string }> = {
   github: { icon: "nf-fa-github", color: "#6e5494" },
@@ -18,15 +18,15 @@ export const SOCIAL_CONFIG: Record<string, { icon: string; color: string }> = {
 };
 
 export const CACHE_FILE_PATH = "node_modules/.github-cache.json";
-export const GITHUB_USERNAME = "milindmadhukar";
+export const GITHUB_USERNAME = "ishaanpearpie";
 export const GITHUB_API_URL = "https://api.github.com";
 export const DISCORD_ID = "421608483629301772"
 
 export const personalInfo = {
-  name: "Milind Madhukar",
+  name: "Ishaan Jain",
   birthDate: BIRTH_DATE,
-  email: "hey@milind.dev",
-  location: "Mumbai, India",
+  email: "ishaanjain0902@gmail.com",
+  location: "Bangalore, India",
 
   getAge() {
     return calculateAge(this.birthDate);
@@ -44,32 +44,22 @@ Currently orchestrating chaos at scale with containers, because who needs stabil
   social: [
     {
       name: "GitHub",
-      url: "https://github.com/milindmadhukar",
+      url: "https://github.com/ishaanpearpie",
       icon: "github"
     },
     {
       name: "LinkedIn",
-      url: "https://www.linkedin.com/in/milind-madhukar-0726b0211/",
+      url: "https://www.linkedin.com/in/IshaanJain2004",
       icon: "linkedin"
     },
     {
       name: "Email",
-      url: "mailto:hey@milind.dev",
+      url: "mailto:ishaanjain0902@gmail.com",
       icon: "mail"
     },
     {
-      name: "Twitter",
-      url: "https://x.com/milind_1504",
-      icon: "twitter"
-    },
-    {
-      name: "Instagram",
-      url: "https://www.instagram.com/milind_1504/",
-      icon: "instagram"
-    },
-    {
       name: "Spotify",
-      url: "https://open.spotify.com/user/6zg8mjgm1xq8za6ye5uv4eyz3",
+      url: "https://open.spotify.com/user/Cowchan",
       icon: "spotify"
     },
     {
@@ -157,15 +147,15 @@ export const projects = [
 
 export const experience = [
   {
-    id: "grass-labs",
-    title: "DevOps Lead",
-    company: "Grass Labs Pte Ltd",
+    id: "cleartrip",
+    title: "Software Development Intern",
+    company: "Cleartrip Arabia",
     location: "Remote",
-    type: "Full-time",
+    type: "Internship",
     startDate: "2024-04-01",
     endDate: null,
     current: true,
-    description: "Leading DevOps infrastructure and deployment strategies for a high-traffic web platform",
+    description: "Software development internship at Cleartrip Arabia",
     responsibilities: [
       "Designed and deployed microservices infrastructure on GCP using Docker and Kubernetes, supporting 1,000+ daily active users with 99.9% uptime",
       "Optimized CI/CD pipelines with Terraform automation, reducing deployment cycles from 45 minutes to 18 minutes (60% improvement)",
