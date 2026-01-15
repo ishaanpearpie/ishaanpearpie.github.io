@@ -33,13 +33,15 @@ export const personalInfo = {
   },
 
   bio: {
-    short: "Building fast backend systems and tinkering with Linux",
-    long: `I'm a ${calculateAge(BIRTH_DATE)} year old developer who gets way too excited about Linux, DevOps magic, system admin wizardry, and everything open source. When I'm not neck-deep in Neovim configs or homelabbing the night away, I'm either building blazingly fast backend systems or self-hosting things just because I can.
+    short: "Full stack dev and ML explorer streamlining complexity through code. Night owl, runner, and investor since 2021.",
+    long: `I’m a ${calculateAge(BIRTH_DATE)} year old developer and a dedicated night owl who does his best thinking when the rest of the world is asleep. My technical life is a blend of building scalable full-stack applications and exploring the intricacies of Artificial Intelligence.
+          
+I am currently focused on working with and learning about Machine Learning and Generative AI , while always enjoying the challenge of optimizing backend performance and architecting clean code. Much of my time is spent diving into research and development across different AI domains and building robust, end-to-end platforms from the ground up.
 
-Currently orchestrating chaos at scale with containers, because who needs stability when you can have Docker networks that make sense only to you?`,
+When I finally step away from the terminal, I’m usually clearing my head with a long run or diving into market data—an interest I’ve been actively pursuing as an investor since 2021. Whether I’m on a stage for public speaking  or deep in a late-night coding session, I am driven to turn complex data into a simpler life using code.`,
   },
 
-  tagline: "Linux Enthusiast • DevOps Nerd • Backend Builder • Homelab Wizard",
+  tagline: "ML Explorer • Full-Stack Developer • Market Enthusiast • Public Speaker",
 
   social: [
     {
