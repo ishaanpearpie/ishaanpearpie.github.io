@@ -20,7 +20,7 @@ export const SOCIAL_CONFIG: Record<string, { icon: string; color: string }> = {
 export const CACHE_FILE_PATH = "node_modules/.github-cache.json";
 export const GITHUB_USERNAME = "ishaanpearpie";
 export const GITHUB_API_URL = "https://api.github.com";
-export const DISCORD_ID = "421608483629301772"
+export const DISCORD_ID = "562969440224935946"
 
 export const personalInfo = {
   name: "Ishaan Jain",
@@ -59,7 +59,7 @@ Currently orchestrating chaos at scale with containers, because who needs stabil
     },
     {
       name: "Spotify",
-      url: "https://open.spotify.com/user/Cowchan",
+      url: "https://open.spotify.com/user/tj0gc74fbnmrc2parip8psase?si=208f1f9851cc48d3",
       icon: "spotify"
     },
     {
