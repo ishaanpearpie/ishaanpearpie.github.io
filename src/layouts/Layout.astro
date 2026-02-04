@@ -15,7 +15,7 @@ const {
     title = `${personalInfo.name} — Developer & DevOps Enthusiast`,
     description = personalInfo.tagline,
     includePadding = true,
-    image = `${Astro.site}favicon.ico`,
+    image = `${Astro.site}favicon.png`,
     bodyClass = "",
 } = Astro.props;
 ---
@@ -25,7 +25,7 @@ const {
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="/favicon.png" type="image/png" />
         <meta name="generator" content={Astro.generator} />
 
         <title>{title}</title>
